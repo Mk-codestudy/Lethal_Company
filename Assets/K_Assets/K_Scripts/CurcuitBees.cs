@@ -62,7 +62,7 @@ public class CurcuitBees : MonoBehaviour
 
     //벌의 공격
     float attackRange = 1.0f; //공격 범위 (벌의 크기랑 똑같음)
-    float currentTime = 0;
+    public float currentTime = 0;
     public float attackDelayTime = 2.0f; //딜레이 타임
 
     void Start()
@@ -106,12 +106,14 @@ public class CurcuitBees : MonoBehaviour
 
         if (Vector3.Distance(transform.position, playertarget.position) < sight) //플레이어가 시야 내에 있으면
         {
+            //cc.enabled = true;
             beeState = BeeState.Chase; //쫓아가기 시작
             print("Bee: Idle >>> Chase");
         }
         else
         {
             //벌집에 붙어있는다.
+            //cc를 좀 꺼야쓰겠다
             transform.position = hivetarget.position;
         }
 
@@ -180,14 +182,21 @@ public class CurcuitBees : MonoBehaviour
     }
     private void ReturnHome()
     {
+        if (Vector3.Distance(transform.position, playertarget.position) < sight) //플레이어가 시야 내에 있으면
+        {
+            beeState = BeeState.Chase; //쫓아가기 시작
+            print("Bee: ReturnHome >>> Chase");
+            return; //끝!
+        }
         //hive 위치가 거리 내에 있다면...
         if (Vector3.Distance(transform.position, hivetarget.position) < sightHome)
         {
             Vector3 dir = hivetarget.position - transform.position; //집 방향이 어딘데
             cc.Move(dir.normalized * returnSpeed * Time.deltaTime); //집에 가라
 
-            if (dir.magnitude < 0.1f)
+            if (dir.magnitude < 0.6f)
             {
+                //cc.enabled = false; //캐릭터 무브 컴포넌트 뺏기
                 beeState = BeeState.Idle;//기본 상태로 돌아옴.
                 print("Bee : ReturnHome >>> Idle");
             }

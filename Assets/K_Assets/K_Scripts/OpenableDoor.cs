@@ -10,7 +10,7 @@ public class OpenableDoor : MonoBehaviour
 
     //특정 몬스터들은 문을 열 수 있음.
 
-
+    public Animator animator;
 
     public Transform player;
 
@@ -98,6 +98,7 @@ public class OpenableDoor : MonoBehaviour
     {
         //문 열기
         print("Door Open!");
+        animator.SetTrigger("Openning");
         isDoorOpen = true;
     }
 
@@ -105,6 +106,7 @@ public class OpenableDoor : MonoBehaviour
     {
         //문 닫기
         print("Door Closed!");
+        animator.SetTrigger("Closing");
         isDoorOpen = false;
     }
 
