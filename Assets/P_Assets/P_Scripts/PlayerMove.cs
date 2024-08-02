@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -26,8 +27,9 @@ public class PlayerMove : MonoBehaviour
     public float currentHp;
     public float currentStamina;
     // 체력 스태미너 슬라이더
-    public Slider hpSlider;
+    public Image hpBar;
     public Slider staminaSlider;
+
     bool isregenStamina = true;
 
 
@@ -188,6 +190,8 @@ public class PlayerMove : MonoBehaviour
     }
 
 
+
+    // 마우스 방향에 따른 캐릭터의 회전
     void Rotate()
     {
         float mouseX = Input.GetAxis("Mouse X");
@@ -228,14 +232,44 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        
+    }
 
-    private void OnTakeDamage(int damage) // 캐릭터가 언제 데미지를 입을지 ( 낙사, 몬스터의 공격, 터렛, 지뢰)
+    //사다리에 있을때 캐릭터의 이동
+    //private void OnCollisionStay(Collision collision)
+    //{
+    //    Vector3 moveDirection = Vector3.zero;
+
+
+    //    if(collision.gameObject.CompareTag("Ladder"))
+    //    {
+    //        if(Input.GetKey(KeyCode.W))
+    //        {
+    //            moveDirection = transform.up;
+    //        }
+    //        else if(Input.GetKey(KeyCode.S))
+    //        {
+    //            moveDirection = -transform.up;
+    //        }
+
+    //        // 앞뒤, 좌우의 움직임 제한
+    //        moveDirection.x = 0;
+    //        moveDirection.z = 0;
+
+    //        cc.Move(moveDirection * walkSpeed * Time.deltaTime);
+    //    }
+    //}
+
+
+
+    // 캐릭터가 데미지 입을 때 
+    private void OnTakeDamage(int damage) 
     {
         currentHp -= damage; // 체력에 데미지값을 -로 누적
-        if(currentHp < 0)
-        {
-            currentHp = 0;
-        }                   
+
+       
 
     }
 
@@ -287,15 +321,47 @@ public class PlayerMove : MonoBehaviour
 
     private void UpdateUI()  // HP stamina 슬라이더를 매 프레임마다 업데이트,  Mathf.Lerp를 사용해서 슬라이더를 부드럽게 
     {
+        // 스태미너 슬라이드
+
         float targetStamina = currentStamina / maxStamina; // 타겟 스태미나 벨류값은 max스태미너 값에서 currentstamina값의 비율
        
 
-        staminaSlider.value = Mathf.Lerp(currentStamina, targetStamina, Time.deltaTime);
+        staminaSlider.value = Mathf.Lerp(currentStamina, targetStamina, Time.deltaTime * 0.5f);
 
         // 좀더 부드럽게 증감되게 수정필요
         //staminaSlider.value = Mathf.Lerp(staminaSlider.value, currentStamina / maxStamina, Time.deltaTime * 10f);
         //hpSlider.value = currentHp;
-        
+
+
+
+        // 체력 칸
+
+        float targetHp = currentHp / maxHp;
+
+        Color hpBarAlpha = hpBar.color; // hp바 이미지의 컬러를, 컬러 클래스의 변수로 넣어서 컨트롤
+   
+
+        if (currentHp == 100)
+        {
+            currentHp = 0;
+            hpBarAlpha.a = 0f; // 체력이 0 일때 hp이미지의 선명도가 0 , // 체력 slider alpha 값 벨류 설정
+        }
+        else if (currentHp > 50 && currentHp < 75)
+        {
+            hpBarAlpha.a = 0.25f; 
+        }
+        else if (currentHp > 25 &&currentHp < 50)
+        {
+            hpBarAlpha.a = 0.5f;
+        }
+        else if (currentHp > 0 && currentHp < 25)
+        {
+            hpBarAlpha.a = 0.75f;
+        }
+        else
+        {
+            hpBarAlpha.a = 1f; // 체력이  일때 hp이미지의 선명도가 1
+        }
 
     }
 
