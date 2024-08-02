@@ -39,6 +39,7 @@ public class PlayerMove : MonoBehaviour
 
     Vector3 gravityPower; // 중력은 vector값이다 ( x, y, z)
 
+    
 
     public float jumpHeight;
     public float maxJump = 1f;
@@ -51,9 +52,9 @@ public class PlayerMove : MonoBehaviour
 
     bool isMoving;
     bool isRunning;
-    bool isCrouch = false; // 앉은 상태 x
+    //bool isCrouch = false; // 앉은 상태 x
     bool isIdle;
-    bool isLadder; // 사다리 타기
+    bool isLadder = false; // 사다리 상태인지 아닌지
 
 
     private Inventory playerInventory;  // 인벤토리 클래스 
@@ -88,8 +89,22 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        Move();
+      
         Rotate();
+        RegenStamina(5);
+        
+        if(isLadder)
+        {
+            Laddermove();
+        }
+        else
+        {
+            Move();
+        }
+
+
+
+
 
         UpdateUI();
        
@@ -98,7 +113,7 @@ public class PlayerMove : MonoBehaviour
 
     void Move() // 캐릭터 걷기, 달리기, 점프, 숙이기(Crouch)
     {
-
+        
 
         // 로컬 벡터로 움직이기
         x = Input.GetAxis("Horizontal");
@@ -142,7 +157,6 @@ public class PlayerMove : MonoBehaviour
             {
                 currentSpeed = walkSpeed;
                
-
                 //isMoving = true;
                 // animator.SetBool("walk", true);
 
@@ -157,10 +171,10 @@ public class PlayerMove : MonoBehaviour
 
 
 
-
         // 캐릭터 점프
+
         yPos += gravityPower.y * gravityVelocity * Time.deltaTime; // 중력의 y축값 * 중력속도 * 시간 보간
-        // 상시 캐릭터에게 y축 아래로 적용되는 힘.
+                                                                  // 상시 캐릭터에게 y축 아래로 적용되는 힘.
 
 
         if (cc.collisionFlags == CollisionFlags.CollidedBelow)
@@ -171,21 +185,18 @@ public class PlayerMove : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && maxJump > 0)  // 스페이스를 누르면 점프한다
         {
-            if (currentStamina > 15f) // 상수로 넣음 
+            if (currentStamina > 15) // 상수로 넣음 
             {
                 yPos = jumpHeight; // 점프시 일시적으로 중력값을 점프 높이로 치환
                 maxJump--;
                 UseStamina(15);
             }
-            
-            
+
         }
 
         movedir.y = yPos;
 
         cc.Move(movedir * currentSpeed * Time.deltaTime);  // 움직임
-
-
 
     }
 
@@ -213,11 +224,12 @@ public class PlayerMove : MonoBehaviour
 
 
         // 를 mathf.clamp로 간단하게 제한
+
         rotX = Mathf.Clamp(rotX, -60f, 60f);
 
         transform.eulerAngles = new Vector3(0, rotY, 0f);
 
-        Camera.main.transform.GetComponent<Follow_Cam>().rotX = rotX;
+        Camera.main.transform.GetComponent<Follow_Cam>().rotX = rotX; // 카메라에 있는 followcam의 스크립트의 rotx 변수를 받아옴
 
 
     }
@@ -232,75 +244,38 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
+    
         
-    }
 
-    //사다리에 있을때 캐릭터의 이동
-    //private void OnCollisionStay(Collision collision)
-    //{
-    //    Vector3 moveDirection = Vector3.zero;
-
-
-    //    if(collision.gameObject.CompareTag("Ladder"))
-    //    {
-    //        if(Input.GetKey(KeyCode.W))
-    //        {
-    //            moveDirection = transform.up;
-    //        }
-    //        else if(Input.GetKey(KeyCode.S))
-    //        {
-    //            moveDirection = -transform.up;
-    //        }
-
-    //        // 앞뒤, 좌우의 움직임 제한
-    //        moveDirection.x = 0;
-    //        moveDirection.z = 0;
-
-    //        cc.Move(moveDirection * walkSpeed * Time.deltaTime);
-    //    }
-    //}
-
-
-
-    // 캐릭터가 데미지 입을 때 
-    private void OnTakeDamage(int damage) 
-    {
-        currentHp -= damage; // 체력에 데미지값을 -로 누적
-
-       
-
-    }
-
+ 
     private void UseStamina(int amount)
     {
-        currentStamina -= amount * Time.deltaTime; // 스태미너 감소를 15로 고정
+        currentStamina -= amount * Time.deltaTime; // 스태미너 감소
+
         if(currentStamina <= 0 )
         {
-            currentStamina = 0;            
+            currentStamina = 0;
+
             isRunning = false;
 
           
         }
     }
 
-    private void RegenStamina(int amount) // 
-    {
-        
-
+    private void RegenStamina(int amount) // 스태미너 재생
+    {        
         if (currentStamina < maxStamina)
         {
             if (isregenStamina) // isregenStamina 가 true 라면
             {
-                currentStamina += amount * Time.deltaTime; // 스태미너를 재생해라
+                currentStamina += amount * Time.deltaTime; // 스태미너를 재생한다.
             }
         }
-        else if(currentStamina <= 0)
+        else if(currentStamina <= 0) // 현재 스태미너가 0이거나 0보다 적다면
         {
-            isregenStamina = false;
+            isregenStamina = false; // 리젠 스태미나를 false로 하고
 
-            StopStaminaTimer(3f);
+            StopStaminaTimer(3f); // 스탑 리젠 코루틴을 시작한다.
         }
 
         
@@ -308,7 +283,7 @@ public class PlayerMove : MonoBehaviour
 
     private void StopStaminaTimer(float time) // 스태미너가 0이 되면 time 초간 스태미너 재생을 연기한다.
     {        
-            StartCoroutine("StaminaCoroutine");        
+            StartCoroutine("StaminaCoroutine");           
     }
 
    IEnumerator StaminaCoroutine()
@@ -335,6 +310,7 @@ public class PlayerMove : MonoBehaviour
 
 
         // 체력 칸
+        #region 체력칸
 
         float targetHp = currentHp / maxHp;
 
@@ -364,6 +340,51 @@ public class PlayerMove : MonoBehaviour
         }
 
     }
+    #endregion
+
+
+    //사다리를 구현한다
+    //플레이어가 Ladder Tag가 붙은 Collider와 stay 할경우]
+    //플레이어의 z,x축 움직임은 제한하고
+    // w, s를 눌렀을때 각 각 transform.up , -transform.up 의 방향으로 walkSpeed 로 이동한다.
+
+   
+
+  
+
+    // 사다리 안에서는 수직으로만 움직이게 제한
+    public void Laddermove()
+    {
+        float y = Input.GetAxis("Vertical");
+
+        Vector3 ladderDir = new Vector3(0, y, 0);
+
+        cc.Move(ladderDir * walkSpeed * Time.deltaTime);
+
+        gravityPower = Physics.gravity;
+
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Ladder"))
+        {
+            print("사다리에 닿았습니다.");
+            isLadder = true;
+        }
+    }
+
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Ladder"))
+        {
+            print("사다리에서 나왔습니다.");
+            isLadder = false;
+        }
+    }
+
+
+
 
 }
 

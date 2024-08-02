@@ -16,7 +16,7 @@ public class Animator_Script : MonoBehaviour
 
     bool isMoving;
     bool isRunning;
-    bool isCrouch = false; // ╬ию╨ ╩Себ x
+   // bool isCrouch = false; // ╬ию╨ ╩Себ x
     bool isIdle;
 
     private void Start()
