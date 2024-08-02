@@ -3,7 +3,52 @@ guid: 5185dbdea16821c4b865d5074e44fcbc
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fan1
+    second: {fileID: 2100000, guid: fde2ae69be348894fb6c3ae5d8f74fd8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fan2
+    second: {fileID: 2100000, guid: 76e4f8b6785e7404bb0c6dfc58f44cf6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fan3
+    second: {fileID: 2100000, guid: 7fa83ef3a216a624fa5d702cd2b94fd6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FanSpin
+    second: {fileID: 2100000, guid: 3017ebb4325a12b4c854663861f083eb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor
+    second: {fileID: 2100000, guid: 267b8439f0d95084796d7e2ad4bc3814, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor2
+    second: {fileID: 2100000, guid: 78852f2c6d444124cb5ce5a45a8cd521, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FloorFrame
+    second: {fileID: 2100000, guid: 6f5d5d22451a64b4983bb09d74bcab78, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Walls
+    second: {fileID: 2100000, guid: 3ec2aef0238cbc9439641b28c594e7ef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WallsConcrete
+    second: {fileID: 2100000, guid: 32d9a6d924472cc47928cda614f96ec8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

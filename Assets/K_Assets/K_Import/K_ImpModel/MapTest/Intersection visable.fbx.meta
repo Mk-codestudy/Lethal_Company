@@ -3,7 +3,72 @@ guid: d62329bb2b8f3254bac1897b99c2351d
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cablebase2
+    second: {fileID: 2100000, guid: 50b0cee7125fb9a4fb15447f6f02a62c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CatWalkGrateMetal
+    second: {fileID: 2100000, guid: 71cc1ab83006f3e46b4f8037790c0764, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CatwalkGrate
+    second: {fileID: 2100000, guid: 1b4e8715f9ec2af40853a100810e5e22, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CatwalkGrateSteel
+    second: {fileID: 2100000, guid: 514d4c19336e49848b2aae5d92e1bb17, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IntersectionPipe
+    second: {fileID: 2100000, guid: bb9479d849d24f74a9d8bfad94cb0b11, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: IntersectionPipe2
+    second: {fileID: 2100000, guid: 937582e4851fc7f4e8609dff6d710e51, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LampBase
+    second: {fileID: 2100000, guid: 04728e6ebec9e0945b13faeb1636abdf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LampCable
+    second: {fileID: 2100000, guid: 8c869fd282fa23c45b852684be63d8ad, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LampGlass
+    second: {fileID: 2100000, guid: fe7e37c38d37fd346a5344feb0e6a053, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LampGrid
+    second: {fileID: 2100000, guid: 411676c962d409442a98bd954aae4a1b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OutsideLamp
+    second: {fileID: 2100000, guid: 3ed5e5da64c9d384c8ce6ecaf84aff90, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RustymetalLoreReinforcement
+    second: {fileID: 2100000, guid: 567786875a3b1a94798ebe78c84f03c9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Walls
+    second: {fileID: 2100000, guid: 361723a76b1e0614697595f24aef50b6, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

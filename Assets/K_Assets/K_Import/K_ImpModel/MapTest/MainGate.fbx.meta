@@ -3,7 +3,32 @@ guid: 663ca3080ec2e8d41a402f1ad90b1a49
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DoorBars
+    second: {fileID: 2100000, guid: eb4e55eba61510147834a09828c98cc5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DoorFrame
+    second: {fileID: 2100000, guid: c772ea91b1739604fa244fcf08a10d6a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DoorHandleKey
+    second: {fileID: 2100000, guid: c210d194133a00e45b7d19ec0c846783, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DoorMain
+    second: {fileID: 2100000, guid: d6ff3508c0342b144a38636841f0921f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DoorWindow
+    second: {fileID: 2100000, guid: 04df7091d8cc9734a9f78cb33d166710, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
