@@ -7,16 +7,18 @@ public class Hygrodere : MonoBehaviour
 {
     //하이그로디어
 
-    
+
     //플레이어가 안 보이면 마지막으로 감지된 플레이어의 위치 근처를 떠돌도록 한다.
     //무적.
     //문을 열 줄 모른다.
     //문을 통과도 못한다.
     //그렇지만 문 너머를 인지할 수 있다. (벽에 계~속 붙어있음)
 
-
+    [Header("애너미 타겟")]
     public Transform target;
 
+    [Header("슬라임 스피드")]
+    [Range(0.5f, 4.0f)]
     public float spd = 1.0f; //슬라임 스피드
     CharacterController cc; //슬라임 이동
 
@@ -26,8 +28,21 @@ public class Hygrodere : MonoBehaviour
     Vector3 patrolCenter; //랜덤 이동 반경의 정중앙
     public float patrolRadius = 8.0f; //슬라임 랜덤 이동 반경
 
+
+    //피격 판정 관련
+    bool isPlayerInZone;
+    private Coroutine damageCoroutine;
+    [Header("N초마다 피격")]
+    public float damageTime = 1.0f;
+
+
     void Start()
     {
+        if (target == null)
+        {
+            Debug.LogWarning("Slime(Hygrodere): 타겟 변수 누락!!");
+        }
+
         //패트롤
         patrolCenter = transform.position; //중간 지점을 캐싱
         patrolNext = patrolCenter; //시작 위치가 다음 위치가 되도록 한다.
@@ -65,5 +80,37 @@ public class Hygrodere : MonoBehaviour
                 patrolNext = patrolCenter + new Vector3(newPos.x, 0, newPos.y);
             }
         }
+
     }
+        void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.name.Contains("Player"))
+            {
+                isPlayerInZone = true;
+                damageCoroutine = StartCoroutine(ApplyDamage());
+            }
+        }
+        void OnTriggerExit(Collider other)
+        {
+            if (other.gameObject.name.Contains("Player"))
+            {
+                isPlayerInZone = false;
+                if (damageCoroutine != null)
+                {
+                    StopCoroutine(damageCoroutine);
+                }
+            }
+        }
+
+        IEnumerator ApplyDamage()
+        {
+            while (isPlayerInZone)
+            {
+                yield return new WaitForSeconds(damageTime);
+            GameManager_Proto.gm.PlayerOnDamaged();
+            GameManager_Proto.gm.AnemHit();
+            Debug.Log("Slime :: 플레이어 데미지 입음!");
+            }
+        }
+
 }

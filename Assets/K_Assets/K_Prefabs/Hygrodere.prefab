@@ -122,9 +122,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  spd: 0.43
+  spd: 3.64
   sight: 30
   patrolRadius: 8
+  damageTime: 0.5
 --- !u!143 &2142812892046309133
 CharacterController:
   m_ObjectHideFlags: 0
@@ -145,7 +146,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 0.93
-  m_Radius: 0.03
+  m_Radius: 0.1
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08

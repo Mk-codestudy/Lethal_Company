@@ -5,13 +5,25 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
     path: Assets/1_ProtoScenes/Main.unity
     guid: a02ea077338c9bd42935133a07feb026
   - enabled: 1
-    path: Assets/1_ProtoScenes/Scene_Sample.unity
-    guid: 0fa6253d6f4b01147aa110f0d4661c2a
+    path: Assets/1_ProtoScenes/Scene_Sample1_ShipContents.unity
+    guid: 585dc58d2b7b1ea4b82d56ef99bfc80e
+  - enabled: 1
+    path: Assets/1_ProtoScenes/Scene_Sample2_FallingSpot.unity
+    guid: a1edb643bbc915e4a8e03f3bdc888244
+  - enabled: 1
+    path: Assets/1_ProtoScenes/Scene_Sample3_MineandTurret.unity
+    guid: 050c34e8ddc0855458a40a1291506b43
+  - enabled: 1
+    path: Assets/1_ProtoScenes/Scene_Sample4_Slime.unity
+    guid: 156ba84c7aca64043bd4e3d188ccc659
+  - enabled: 1
+    path: Assets/1_ProtoScenes/Scene_Sample5_Bee.unity
+    guid: fbe974159d1d78a49836be56da2ef694
+  - enabled: 1
+    path: Assets/1_ProtoScenes/Scene_Sample6_Thumper.unity
+    guid: 97f59a3356bc0f04ba0328c2c45b9501
   m_configObjects: {}

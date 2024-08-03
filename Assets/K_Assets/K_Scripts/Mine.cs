@@ -20,8 +20,21 @@ public class Mine : MonoBehaviour
 
     Rigidbody rb;
 
-    bool soundOn = false;
+    //bool soundOn = false;
 
+    //파티클
+    public GameObject explosionparticle;
+
+    //사운드
+    AudioSource minesound;
+    public AudioClip[] minesoundclip;
+
+
+    private void Start()
+    {
+        explosionparticle.SetActive(false);
+        minesound = gameObject.GetComponent<AudioSource>();
+    }
 
     void Update()
     {
@@ -32,7 +45,10 @@ public class Mine : MonoBehaviour
         }
         else
         {
+            //빛이 번쩍
             //오디오 재생
+            minesound.clip = minesoundclip[0];
+            minesound.Play();
             currenttime = 0;
         }
 
@@ -44,26 +60,39 @@ public class Mine : MonoBehaviour
         if (collision.gameObject.name.Contains("Player")) //감지된 게임오브젝트 이름에 플레이어가 있니?
         {
             rb = collision.gameObject.GetComponent<Rigidbody>(); //찾은 오브젝트 리지드바디 가져오기...
-            print("Debug_리지드바디 누구 :" + rb.gameObject.name);
+            Debug.Log("Debug_리지드바디 누구 :" + rb.gameObject.name);
+
+            collision.gameObject.GetComponent<CharacterController>().enabled = false;
+
+            Invoke("AudioOn", 0); //소리 재생
 
             Invoke("Explosion", 0.5f);
         }         
+    }
+
+    public void AudioOn()
+    {
+        minesound.clip = minesoundclip[1];
+        minesound.Play();
+        currenttime = 0;
     }
 
     public void Explosion()
     {
         if (rb != null) //있으면...
         {
+            rb.isKinematic = false;
+            rb.useGravity = true;
             rb.AddExplosionForce(800, transform.position, radius, 60); //(폭발 파워, 폭발의 중심위치, 각도, 위로 튀어오를 거리값)
-                                                                       //플레이어 사망 판정
-                                                                       //파티클 뻥
-                                                                       //지뢰는 사라짐
-
-            Destroy(gameObject);
+            explosionparticle.SetActive(true);
+            Destroy(gameObject.transform.GetChild(0).gameObject);//지뢰 몸은 사라짐
+            gameObject.GetComponent<BoxCollider>().enabled = false; //콜라이더 비활성화
+            minesound.enabled = false; //사운드도 꺼
+            GameManager_Proto.gm.PlayerDead();//플레이어 사망 판정
         }
         else
         {
-            print("인식된 Rigidbidy 없음!");
+            Debug.LogWarning("mine :: 인식된 Rigidbidy 없음!");
         }
     }
 }

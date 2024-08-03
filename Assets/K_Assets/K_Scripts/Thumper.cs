@@ -49,8 +49,8 @@ public class Thumper : MonoBehaviour
     public float sightDis = 15.0f;
 
     //Idle 관련 변수
-    float currentTime = 1;
-    float idletime;
+    public float currentTime = 0;
+    public float idletime;
 
 
     //Patrol 관련 변수
@@ -61,16 +61,50 @@ public class Thumper : MonoBehaviour
     [Range(2.0f, 8.0f)]
     public float patrolSpd = 3.0f;
 
+
+    //Scream 관련 변수
+    bool isalreadyScream;
+
+    //Trace 관련 변수
+    [Header("n초간 시야에 플레이어가 들지 않으면 Idle")]
+    [Range(1.0f, 5.0f)]
+    public float setsearchingTime = 3;
+    float searchingTime;
+    Transform tracetarget; //타겟이 보이는지 체크하는 중
+    [Header("추격 속도")]
+    [Range(1.0f, 20.0f)]
+    public float traceSpd = 10.0f;
+
+    [Header("회전 속도")]
+    [Range(1.0f, 8.0f)]
+    public float rotSpd = 5.0f;
+
+    [Header("공격 범위")]
+    public float attackRange = 1.5f;
+
+    //attackDelay관련 변수
+    [Header("공격 딜레이")]
+    public float attackDelaytime = 1.0f;
+
+
     //캐싱 관련 변수
     CharacterController cc;
+    AudioSource audioSource;
+
+    //덤퍼 오디오
+
 
     void Start()
     {
         cc = GetComponent<CharacterController>();
+        audioSource = GetComponent<AudioSource>();
 
-        //패트롤
+
+        // 패트롤 초기화
         patrolCenter = transform.position;
-        patrolNext = patrolCenter;
+        idletime = UnityEngine.Random.Range(1.0f, 4.0f); // 초기 idletime 설정
+
+        searchingTime = setsearchingTime; //teace 관련 변수 초기화
 
     }
 
@@ -124,6 +158,7 @@ public class Thumper : MonoBehaviour
             currentTime = 0;
             thpstate = ThpState.Patrol;
             print("ThpState : Idle >>> Patrol");
+            // 패트롤 지점 설정
         }
 
     }
@@ -138,33 +173,89 @@ public class Thumper : MonoBehaviour
 
         //선택된 지점으로 이동한다.
         Vector3 dir = patrolNext - transform.position;
-        
+        dir.y = 0;
+
         if (dir.magnitude > 0.1f)
         {
             cc.Move(dir.normalized * patrolSpd * Time.deltaTime);
+            SmoothRotateToYou(dir);
+
         }
         else
         {
-            Vector2 newPos = UnityEngine.Random.insideUnitCircle * patrolRadius; //반지름이 patrolRadius인 circle 함수
-            
-            patrolNext = patrolCenter + new Vector3(newPos.x, 0, newPos.y); //다음 패트롤 위치 정해 주고
+            // 다음 패트롤 위치 정하기
+            Vector2 newPos = UnityEngine.Random.insideUnitCircle * patrolRadius;
+            patrolNext = patrolCenter + new Vector3(newPos.x, 0, newPos.y);
 
-            idletime = UnityEngine.Random.Range(1.0f, 5.0f); //아이들 시간만 랜덤으로 지정해주면 됨
-            print("Debug_Idletime : " + idletime);
             thpstate = ThpState.Idle; //아이들로 바꾸고
+            idletime = UnityEngine.Random.Range(1.0f, 4.0f); //아이들 시간만 랜덤으로 지정해주면 됨
+            print("Debug_Idletime : " + idletime);
             print("ThpState : Patrol >>>> Idle");
 
         }
 
     }
 
+    void CheckSight(float degree, float maxDistance)
+    {
+
+        target = null; //시야 체크 할때마다 타겟 비워.
+
+        // 1. 월드 안에 배치된 오브젝트 중에 Tag가 "Player"인 오브젝트를 모두 찾는다.
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        for (int i = 0; i < players.Length; i++) //범위 내의 오브젝트 추출
+        {
+            float distance = Vector3.Distance(players[i].transform.position, transform.position); //기존함수 사용 방법
+
+            if (distance <= maxDistance)
+            {
+                // 3. 찾은 오브젝트를 바라보는 벡터와 나의 전방 벡터를 내적한다.
+                //나의 전방 벡터는 트랜스폼.forward.
+                Vector3 lookvector = players[i].transform.position - transform.position; //오브젝트를 바라보는 벡터
+                lookvector.Normalize();
+
+                float cosTheta = Vector3.Dot(transform.forward, lookvector); //<내적하는 함수
+                float theta = Mathf.Acos(cosTheta) * Mathf.Rad2Deg;
+
+                if (cosTheta > 0 && theta < degree)
+                {
+                    target = players[i].transform;
+
+                    //상태를 trace 상태로 전환한다.
+                    thpstate = ThpState.Scream;
+                    print("MyState : Idle/Patrol >>>> Scream");
+                }
+            }
+        }
+
+    }
+
+
+
     private void Scream()
     {
-        //소리 꿕 지르면서
-        //1초 시간주기
+        if (!isalreadyScream)
+        {
+            audioSource.Play(); //소리 꿕 지르면서
+            Invoke("ScreamWhatnext", 1.5f); //1초 시간주기
+            isalreadyScream = true;
+        }
+        Vector3 dir = target.position - transform.position;
+        dir.y = 0; //모델링 시선을 수평으로 만들기
 
+        SmoothRotateToYou(dir);
+    }
+
+    void ScreamWhatnext()
+    {
         //일정 거리 이상이면 Rush
         //일정 거리 이하면 Trace
+
+        thpstate = ThpState.Trace;
+        print("MyState : Scream >>>> Trace");
+
+        isalreadyScream = false;
     }
 
     private void Rush()
@@ -181,18 +272,101 @@ public class Thumper : MonoBehaviour
         //내 시야에 플레이어가 안 보이는 상태가 3초 이상 지속되면 patrol
         //내 시야 안에 플레이어가 있을 때 플레이어를 따라감
         //어택범위 안에 플레이어가 들어오면 어택
+
+        traceSight(sightRot, sightDis);
+
+        if (tracetarget == null)
+        {
+            searchingTime -= Time.deltaTime;
+            if (searchingTime < 0)
+            {
+                //상태 Idle로 전환.
+                thpstate = ThpState.Idle;
+                print("MyState : Trace >>> Idle");
+                searchingTime = setsearchingTime;
+                return;
+            }
+        }
+        else
+        {
+            searchingTime = setsearchingTime;
+        }
+
+        Vector3 dir = target.position - transform.position;
+        dir.y = 0;
+        cc.Move(dir.normalized * traceSpd * Time.deltaTime);
+
+        SmoothRotateToYou(dir);
+
+        if (dir.magnitude < attackRange)
+        {
+            currentTime = 0;
+            searchingTime = setsearchingTime;
+            thpstate = ThpState.Attack;
+            print("MyState : Trace >>> Attack");
+        }
+
+    }
+
+    void traceSight(float degree, float maxDistance)
+    {
+
+        tracetarget = null; //시야 체크 할때마다 타겟 비워.
+
+        // 1. 월드 안에 배치된 오브젝트 중에 Tag가 "Player"인 오브젝트를 모두 찾는다.
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+        for (int i = 0; i < players.Length; i++) //범위 내의 오브젝트 추출
+        {
+            float distance = Vector3.Distance(players[i].transform.position, transform.position); //기존함수 사용 방법
+
+            if (distance <= maxDistance)
+            {
+                // 3. 찾은 오브젝트를 바라보는 벡터와 나의 전방 벡터를 내적한다.
+                //나의 전방 벡터는 트랜스폼.forward.
+                Vector3 lookvector = players[i].transform.position - transform.position; //오브젝트를 바라보는 벡터
+                lookvector.Normalize();
+
+                float cosTheta = Vector3.Dot(transform.forward, lookvector); //<내적하는 함수
+                float theta = Mathf.Acos(cosTheta) * Mathf.Rad2Deg;
+
+                if (cosTheta > 0 && theta < degree)
+                {
+                    tracetarget = players[i].transform;
+                }
+            }
+        }
     }
 
     private void Attack()
     {
+        GameManager_Proto.gm.AnemHit();
+        GameManager_Proto.gm.PlayerOnDamaged();
         //공격 애니메이션
         //공격 사운드
         //공격 영역 콜라이더 inable (닿으면 한 번만 HP가 줄어들도록)
         //어택딜레이로 넘어가기
+        thpstate = ThpState.AttackDelay;
+        print("MyState : Attack >>> AttackDelay");
     }
 
     private void AttackDelay()
     {
+        currentTime += Time.deltaTime;
+        searchingTime -= Time.deltaTime;
+        if (attackDelaytime < currentTime)
+        {
+            thpstate = ThpState.Trace;
+            print("MyState : AttackDelay >>> Trace");
+            return;
+        }
+        else
+        {
+            Vector3 dir = target.position - transform.position;
+            dir.y = 0;
+            SmoothRotateToYou(dir);
+        }
+
         //공격 콜라이더 Disable
         //1초정도 대기
         //거리 재서 Trace냐 Rush냐
@@ -211,50 +385,15 @@ public class Thumper : MonoBehaviour
         //대부분의 기능 Disable
     }
 
-    //얘는 시야체크를 해보자...
-    void CheckSight(float degree, float maxDistance)
+
+    
+    void SmoothRotateToYou(Vector3 dir)
     {
-
-        target = null; //시야 체크 할때마다 타겟 비워.
-
-        // 시야 범위 안에 들어온 대상이 있다면 그 대상을 타겟으로 설정하고 싶다.
-        // 시야 범위(시야각 좌우 5도, 전방, 시야 거리: 10미터)
-        // 대상 선택을 위한 태그(Player) 설정
-
-        // 1. 월드 안에 배치된 오브젝트 중에 Tag가 "Player"인 오브젝트를 모두 찾는다.
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-
-        // 2. 찾은 오브젝트들 중에서 거리가 maxDistance 이내인 오브젝트만 찾는다.
-
-        for (int i = 0; i < players.Length; i++) //범위 내의 오브젝트 추출
-        {
-            //float distance = (players[i].transform.position - transform.position).magnitude; //원시적 방법
-            float distance = Vector3.Distance(players[i].transform.position, transform.position); //기존함수 사용 방법
-
-            if (distance <= maxDistance)
-            {
-                // 3. 찾은 오브젝트를 바라보는 벡터와 나의 전방 벡터를 내적한다.
-                //나의 전방 벡터는 트랜스폼.forward.
-                Vector3 lookvector = players[i].transform.position - transform.position; //오브젝트를 바라보는 벡터
-                lookvector.Normalize();
-
-                float cosTheta = Vector3.Dot(transform.forward, lookvector); //<내적하는 함수
-                float theta = Mathf.Acos(cosTheta) * Mathf.Rad2Deg; //Acos는 각도값을 라디안으로 출력한대
-
-                // 4-1. 만약 내적의 결과 값이 0보다 크면(나보다 앞쪽에 있다는 뜻)...
-                // 4-2. 만약 사잇각의 값이 30보다 작으면(전방 좌우 30도 이내)
-                if (cosTheta > 0 && theta < degree)
-                {
-                    target = players[i].transform;
-
-                    //상태를 trace 상태로 전환한다.
-                    thpstate = ThpState.Scream;
-                    print("MyState : Idle/Patrol >>>> Scream");
-                }
-            }
-        }
-
+        Quaternion currentRotation = transform.rotation;
+        Quaternion targetRotation = Quaternion.LookRotation(dir.normalized);
+        transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotSpd * Time.deltaTime);
     }
+
 
     private void OnDrawGizmos()
     {
@@ -264,23 +403,22 @@ public class Thumper : MonoBehaviour
         float rightDegree = 90 - sightRot;
         float leftDegree = 90 + sightRot;
 
-        Vector3 rightpos = new Vector3(Mathf.Cos(rightDegree * Mathf.Deg2Rad),
-                                                  0,
-                                                  MathF.Sin(rightDegree * Mathf.Deg2Rad)) * sightDis
-                                                + transform.position;
+        Vector3 rightpos = (transform.right * Mathf.Cos(rightDegree * Mathf.Deg2Rad) +
+                           transform.forward * MathF.Sin(rightDegree * Mathf.Deg2Rad)) * sightDis
+                          + transform.position;
 
-        Vector3 leftpos = new Vector3(Mathf.Cos(leftDegree * Mathf.Deg2Rad),
-                                                  0,
-                                                  MathF.Sin(leftDegree * Mathf.Deg2Rad)) * sightDis
-                                                + transform.position;
+
+        Vector3 leftpos = (transform.right * Mathf.Cos(leftDegree * Mathf.Deg2Rad) +
+                          transform.forward * MathF.Sin(leftDegree * Mathf.Deg2Rad)) * sightDis
+                          + transform.position;
 
         Gizmos.DrawLine(transform.position, rightpos);
         Gizmos.DrawLine(transform.position, leftpos);
         #endregion
 
         #region 패트롤 거리
-        //Gizmos.color = Color.white;
-        //Gizmos.DrawWireSphere(transform.position, patrolRadius);
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(transform.position, patrolRadius);
         #endregion
 
     }

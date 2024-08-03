@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,31 +8,37 @@ public class OpenableDoor : MonoBehaviour
     //다시 e키를 꾹 누르면 문이 닫힘.
 
     //특정 몬스터들은 문을 열 수 있음.
+    [Header("플레이어 게임오브젝트")]
+    public Transform player;
 
     public Animator animator;
 
-    public Transform player;
-
     //플레이어와 문 간의 거리 재기
+    [Header("플레이어 상호작용 가능 거리")]
     [Range(1.0f, 6.0f)]
     public float interactionDistance = 2.0f; //상호작용 가능한 거리
-
-    #region 기즈모로 거리 확인하기
-    public Color gizmoColor = Color.green;
-    #endregion
+    public bool showGizmoSphare;
+    public bool showGizmoLine;
 
     //E키 홀딩 시간
+    [Header("E 홀드 시간")]
+    [Range(0.5f, 3.0f)]
     public float doorHoldTime = 1.5f;
-    public float currentHoldTime = 0;
+    float currentHoldTime = 0;
 
     //문 여닫힘 여부 확인
     bool isDoorOpen = false;
 
     //UI
+    [Header("진척도 슬라이더 UI")]
     public Slider progressSlider; // 진척도를 표시할 Slider
 
     void Start()
     {
+        if (player == null)
+        {
+            Debug.LogWarning("Door :: Player 게임오브젝트를 변수에 할당하지 않음!");
+        }
         player = GameObject.FindGameObjectWithTag("Player").transform; //캐싱~
 
         // Slider를 초기화
@@ -134,13 +139,21 @@ public class OpenableDoor : MonoBehaviour
     private void OnDrawGizmos()
     {
         // Gizmos 색상 설정
-        Gizmos.color = gizmoColor;
+        Gizmos.color = Color.green;
 
-        // 문과 플레이어 사이의 선 그리기
-        Gizmos.DrawLine(transform.position, player.position);
+        if (showGizmoLine)
+        {
+            Gizmos.color = Color.yellow;
+            // 문과 플레이어 사이의 선 그리기
+            Gizmos.DrawLine(transform.position, player.position);
+        }
 
-        // 상호작용 가능한 거리 표시
-        Gizmos.DrawWireSphere(transform.position, interactionDistance);
+        if (showGizmoSphare)
+        {
+            Gizmos.color = Color.green;
+            // 상호작용 가능한 거리 표시
+            Gizmos.DrawWireSphere(transform.position, interactionDistance);
+        }
     }
     #endregion
 

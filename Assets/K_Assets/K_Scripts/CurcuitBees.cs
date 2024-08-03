@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -35,15 +34,23 @@ public class CurcuitBees : MonoBehaviour
     public BeeState beeState = BeeState.Idle;
 
     CharacterController cc;
+    [Header("Enemytarget 게임오브젝트")]
     public Transform playertarget; //플레이어 위치
+    [Header("BeeHive(벌집) 게임오브젝트")]
     public Transform hivetarget; //벌집 위치
 
     //벌의 인식
+    [Header("벌 시야")]
     [Range(5.0f, 15.0f)]
     public float sight = 10.0f; //플레이어 인식 시야
+    public bool showSightGizmo;
+
+    [Range(15.0f, 30.0f)]
     public float sightHome = 20.0f; //벌집 찾는 시야
+    public bool showHomeGizmo;
 
     //벌의 이동
+    [Header("벌 속도")]
     [Range(1.0f, 10.0f)]
     public float chaseSpeed = 2.0f; //추격 속도
     [Range(0.5f, 10.0f)]
@@ -52,21 +59,41 @@ public class CurcuitBees : MonoBehaviour
     public float madspd = 1.5f; //미친 벌 속도
 
 
-
-
     //벌의 랜덤 이동(Mad)
     Vector3 patrolNext; //랜덤 이동 지점
     Vector3 patrolCenter; //랜덤 이동 반경의 정중앙
+    [Header("MAD 상태: 랜덤 이동 반경")]
+    [Range(5f, 30f)]
     public float patrolRadius = 10.0f; //벌 랜덤 이동 반경
 
 
     //벌의 공격
+    //[Range(1.0f, 2.5f)]
     float attackRange = 1.0f; //공격 범위 (벌의 크기랑 똑같음)
-    public float currentTime = 0;
+    [Header("공격 관련 수치")]
     public float attackDelayTime = 2.0f; //딜레이 타임
+    /*public*/ bool showAttackRangeGizmo;
+    float currentTime = 0;
+    [Header("N초마다 피격")]
+    [Range(0.5f, 2.0f)]
+    public float damageTime = 1.0f;
+
+    //플레이어 피격 코루틴 관련 변수
+    bool isPlayerInZone;
+    private Coroutine damageCoroutine;
+
 
     void Start()
     {
+        if (playertarget == null)
+        {
+            Debug.LogWarning("Bee:: 플레이어 게임오브젝트 변수에 부여되지 않음!");
+        }
+        if (hivetarget == null)
+        {
+            Debug.LogWarning("Bee:: 벌집 게임오브젝트 변수에 부여되지 않음!");
+        }
+
         cc = GetComponent<CharacterController>();
         beeState = BeeState.Idle;
     }
@@ -97,6 +124,7 @@ public class CurcuitBees : MonoBehaviour
 
     }
 
+    #region Enum 관련 함수
     private void Idle()
     {
         //벌집과 벌의 위치가 0.1f 이하일 때 //리턴에서 설정
@@ -113,7 +141,6 @@ public class CurcuitBees : MonoBehaviour
         else
         {
             //벌집에 붙어있는다.
-            //cc를 좀 꺼야쓰겠다
             transform.position = hivetarget.position;
         }
 
@@ -233,11 +260,61 @@ public class CurcuitBees : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region collider & 코루틴 데미지 부여 함수들
+
+    IEnumerator ApplyDamage()
+    {
+        while (isPlayerInZone)
+        {
+            yield return new WaitForSeconds(damageTime);
+            GameManager_Proto.gm.PlayerOnDamaged();
+            GameManager_Proto.gm.AnemHit();
+            Debug.Log("Bee :: 플레이어 데미지 입음!");
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name.Contains("Player"))
+        {
+            isPlayerInZone = true;
+            damageCoroutine = StartCoroutine(ApplyDamage());
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.name.Contains("Player"))
+        {
+            isPlayerInZone = false;
+            if (damageCoroutine != null)
+            {
+                StopCoroutine(damageCoroutine);
+            }
+        }
+    }
+
+    #endregion
 
     private void OnDrawGizmos()
     {
-        //Gizmos.DrawWireSphere(transform.position, sightHome); //집 인식 범위 기즈모
-        Gizmos.DrawWireSphere(transform.position, sight); //플레이어 인식 범위 기즈모
-        //Gizmos.DrawWireSphere(transform.position, attackRange); //공격 범위 기즈모
+        if (showHomeGizmo)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, sightHome); //집 인식 범위 기즈모
+        }
+        if (showSightGizmo)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, sight); //플레이어 인식 범위 기즈모
+        }
+
+        if (showAttackRangeGizmo)
+        {
+            Gizmos.color= Color.red;
+            Gizmos.DrawWireSphere(transform.position, attackRange); //공격 범위 기즈모
+        }
     }
 }

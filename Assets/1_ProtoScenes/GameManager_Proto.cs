@@ -74,7 +74,7 @@ public class GameManager_Proto : MonoBehaviour
         }
 
         //씬 넘기기
-        if (Input.GetKeyDown(KeyCode.F4))            // F4 누르면...
+        if (Input.GetKeyDown(KeyCode.F7))            // F4 누르면...
         {
             SceneLethal(-1);                        // 이전 씬 스타트
         }
@@ -82,7 +82,7 @@ public class GameManager_Proto : MonoBehaviour
         {
             SceneLethal(0);                         // 현재 씬 스타트
         }
-        else if (Input.GetKeyDown(KeyCode.F6))       // F6 누르면...
+        else if (Input.GetKeyDown(KeyCode.F8))       // F6 누르면...
         {
             SceneLethal(1);                         // 다음 씬 스타트
         }
@@ -135,6 +135,7 @@ public class GameManager_Proto : MonoBehaviour
         EnumHP -= 15; //데미지 가하기
 
     }
+
     public void PlayerOnDamaged()
     {
         //카메라 뒤흔들며 아픈 연출
