@@ -3,15 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
-using UnityEditorInternal;
+//using UnityEditor.Experimental.GraphView;
+//using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 //using UnityEngine.UIElements;
 
-//using UnityEngine.UIElements;
-using static UnityEditor.Progress;
+
+
+//using static UnityEditor.Progress;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -79,7 +80,7 @@ public class PlayerMove : MonoBehaviour
     public float rayDistance = 10f;
 
     CharacterController cc;
-    public Animator animator;
+    //public Animator animator;
 
 
 
@@ -92,7 +93,7 @@ public class PlayerMove : MonoBehaviour
 
         cc = GetComponent<CharacterController>(); // cc 컴포넌트
 
-        animator = GetComponent<Animator>();  // animator controller 가 들어가 있는 플레이어 모델링을 이곳에 집어 넣는다.
+        //animator = GetComponent<Animator>();  // animator controller 가 들어가 있는 플레이어 모델링을 이곳에 집어 넣는다.
 
         gravityPower = Physics.gravity;  // 중력 초기화 
 
@@ -132,7 +133,7 @@ public class PlayerMove : MonoBehaviour
             Move();
         }
 
-        // HandleInput();
+        
 
         UpdateUI();
 
@@ -413,7 +414,7 @@ public class PlayerMove : MonoBehaviour
     {
         float y = Input.GetAxis("Vertical");
 
-        Vector3 ladderDir = new Vector3(0, y, 0.1f);
+        Vector3 ladderDir = new Vector3(0, y, 0f);
 
         cc.Move(ladderDir * walkSpeed * Time.deltaTime);
 
@@ -431,17 +432,7 @@ public class PlayerMove : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (other.CompareTag("Item"))   // 아이템이 닿았을때
-        //{
-        //    Debug.Log("아이템과 닿았습니다.");
-        //    currentItemObject = other.gameObject;
-        //    currentItem = currentItemObject.GetComponent<Item>();
-
-        //    //if (currentItem == null)
-        //    //{
-        //    //    Debug.LogWarning("Item component is missing on the item GameObject.");
-        //    //}
-        //}
+        
     }
 
     private void OnTriggerExit(Collider other)
@@ -460,13 +451,7 @@ public class PlayerMove : MonoBehaviour
 
         }
 
-        //if (other.CompareTag("Item"))  // 아이템에서 떨어졌을떄
-        //{
-        //    Debug.Log("아이템에서 떨어졌습니다.");
-        //    currentItem = null;
-        //    currentItemObject = null;
-        //}
-
+        
 
 
     }

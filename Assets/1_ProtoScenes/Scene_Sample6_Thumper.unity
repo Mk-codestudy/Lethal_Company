@@ -236,11 +236,11 @@ RectTransform:
   - {fileID: 816844175}
   m_Father: {fileID: 1269771857}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -556.7, y: 26.2}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -322}
   m_SizeDelta: {x: 400, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &168208412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -867,12 +867,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9cc0a099e5889149ad41b987dc24405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  x: 0
-  v: 0
-  walkSpeed: 5
-  runSpeed: 15
-  currentSpeed: 20
-  rotSpeed: 500
 --- !u!95 &647446573
 Animator:
   serializedVersion: 5
@@ -1770,7 +1764,6 @@ GameObject:
   - component: {fileID: 1146344049}
   - component: {fileID: 1146344048}
   - component: {fileID: 1146344047}
-  - component: {fileID: 1146344046}
   - component: {fileID: 1146344054}
   m_Layer: 0
   m_Name: Player
@@ -1779,20 +1772,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1146344046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1146344045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d2c79fde569e8145a6b9e3a496d6d71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  items: []
-  inventorySize: 4
 --- !u!114 &1146344047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1824,7 +1803,7 @@ MonoBehaviour:
   walkSpeed: 5
   runSpeed: 15
   currentSpeed: 20
-  rotSpeed: 300
+  rotSpeed: 200
   maxHp: 0
   maxStamina: 100
   currentHp: 0
@@ -1832,10 +1811,11 @@ MonoBehaviour:
   hpBar: {fileID: 1915319289}
   staminaSlider: {fileID: 168208412}
   moveDir: {x: 0, y: 0, z: 0}
-  jumpHeight: 35
+  jumpHeight: 5
   maxJump: 1
-  gravityVelocity: 100
-  item: {fileID: 0}
+  gravityVelocity: 2
+  collectedItems: []
+  rayDistance: 10
 --- !u!143 &1146344049
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2888,11 +2868,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1269771857}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -591, y: 173}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 150.1, y: -110.7}
   m_SizeDelta: {x: 100, y: 180}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &1915319289
 MonoBehaviour:
   m_ObjectHideFlags: 0
