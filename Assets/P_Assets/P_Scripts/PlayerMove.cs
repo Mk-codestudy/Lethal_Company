@@ -472,85 +472,9 @@ public class PlayerMove : MonoBehaviour
     }
 
 
-    #region 지울까 말까
+    
 
-    //// 아이템 줍기, 버리기 관련 함수들
-
-    //private void HandleInput()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.E)) // 'E'를 눌렀을 때 아이템 줍기
-    //    {
-    //        PickUpItem();
-    //    }
-
-    //    if (Input.GetKeyDown(KeyCode.G)) // 'G'를 눌렀을 때 현재 선택된 슬롯의 아이템 버리기
-    //    {
-    //        DropItemFromSelectedSlot();
-    //    }
-
-    //    // 슬롯 선택
-    //    if (Input.GetKeyDown(KeyCode.Alpha1)) { selectedSlot = 0; }
-    //    if (Input.GetKeyDown(KeyCode.Alpha2)) { selectedSlot = 1; }
-    //    if (Input.GetKeyDown(KeyCode.Alpha3)) { selectedSlot = 2; }
-    //    if (Input.GetKeyDown(KeyCode.Alpha4)) { selectedSlot = 3; }
-    //}
-
-
-    //private void PickUpItem()  // 줍기 함수
-    //{
-    //    if (currentItem != null && inventory != null)  // 만약 현재 아이템이 null 이 아니고 인벤토리도 null 이 아니라면 
-    //    {
-    //        inventory.AddItem(currentItem); // 인벤토리.additem  함수를 호출하여 인벤에 아이템 추가
-
-    //        if (currentItemObject != null)
-    //        {
-    //            Destroy(currentItemObject); // 씬에서 아이템 제거
-    //            currentItemObject = null; // 아이템 오브젝트를 null로 설정
-    //        }
-
-    //        currentItem = null;
-
-    //    }
-    //    else
-    //    {
-    //        Debug.LogWarning("Cannot pick up item: currentItem or inventory is null.");
-    //    }
-    //}
-
-
-
-    //private void DropItemFromSelectedSlot()  // 버리기 함수
-    //{
-    //    if (selectedSlot >= 0 && selectedSlot < inventory.slots.Length)
-    //    {
-    //        Item itemToDrop = inventory.slots[selectedSlot];
-
-    //        if (itemToDrop != null)
-    //        {
-    //            inventory.RemoveItem(selectedSlot); // 인벤토리에서 아이템 제거
-
-    //            // 아이템을 씬에 다시 생성
-    //            if (itemPrefab != null)
-    //            {
-    //                Instantiate(itemPrefab, transform.position + transform.forward, Quaternion.identity);
-    //            }
-    //            else
-    //            {
-    //                Debug.LogWarning("ItemPrefab is not assigned.");
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.LogWarning("No item found in the selected slot.");
-    //        }
-    //    }
-    //    else
-    //    {
-    //        Debug.LogWarning("Selected slot index is out of range.");
-    //    }
-    //}
-
-    #endregion
+   
     //아이템 줍기
     public void ItemPickUp()
     {
@@ -583,17 +507,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-        //시발진짜
-
-
-        //public void PickupItem()
-        // 4칸짜리 gameobject를 담을 list를 만든다
-
-        // 플레이어의 전방으로 레이캐스트를 발사한다
-        // 레이캐스트에 닿은 collider의 태그가 Item &&  e를 누르면
-
-        // gameobject가 player 의 list 안에 생성되고
-        // 씬에서 game obejct는 삭제된다.
+       
 
 
 
