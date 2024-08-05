@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -62,22 +63,19 @@ public class PlayerMove : MonoBehaviour
 
 
 
-    //// 아이템 줍기 상호작용 변수들
-    //public Inventory_Manager inventory; // 인벤토리 스크립트에서 인벤토리를 가져옴// start로 inventory  = getcomponent를 하면 안되는게 이미 inventory script에서 초기화가 되어있기때문에
-    //                                    // 플레이어 start에서 초기화 해버리면 인스펙터에서 사라짐.
-    //public float pickUpRange = 3f; // 아이템 줍기 가능한 거리
 
 
 
-    //public GameObject itemPrefab;
-    //private Item currentItem; // 현재 접근 가능한 아이템
-    //private GameObject currentItemObject; // 현재 접근 가능한 아이템 오브젝트
-    //private int selectedSlot = -1; // 현재 선택된 슬롯 인덱스
+    //아이템 줍기 상호작용
+
+    public Inventory inventory; // 인벤토리를 참조하는 변수
+    private GameObject currentItem; // 현재 충돌 중인 아이템
 
 
-    //아이템 줍기 상호작용2
-    public List<GameObject> collectedItems = new List<GameObject>();
-    public float rayDistance = 10f;
+
+
+
+
 
     CharacterController cc;
     //public Animator animator;
@@ -110,6 +108,15 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
+        // 숫자 키 3~6를 눌러서 인벤토리 슬롯을 선택
+        if (Input.GetKeyDown(KeyCode.Alpha3)) { inventory.selectedSlot = 0; }
+        else if (Input.GetKeyDown(KeyCode.Alpha4)) { inventory.selectedSlot = 1; }
+        else if (Input.GetKeyDown(KeyCode.Alpha5)) { inventory.selectedSlot = 2; }
+        else if (Input.GetKeyDown(KeyCode.Alpha6)) { inventory.selectedSlot = 3; }
+
+        PickupItem();
+
+        DropItem();
 
         Rotate();
         RegenStamina(5);
@@ -133,15 +140,11 @@ public class PlayerMove : MonoBehaviour
             Move();
         }
 
-        
+
 
         UpdateUI();
 
-        //아이템 상호작용
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ItemPickUp();
-        }
+      
 
 
     }
@@ -432,7 +435,12 @@ public class PlayerMove : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+        // 충돌한 콜라이더의 태그가 "item"인지 확인
+        if (other.CompareTag("Item"))
+        {
+            Debug.Log("아이템에 닿았습니다.");
+            currentItem = other.gameObject; // 현재 충돌 중인 아이템을 currentitem변수에 넣기
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -451,55 +459,89 @@ public class PlayerMove : MonoBehaviour
 
         }
 
-        
+        // 아이템과의 충돌이 종료된 경우, 현재 아이템을 null로 설정
+        if (other.CompareTag("Item") && other.gameObject == currentItem)
+        {
+            Debug.Log("아이템에서 떨어졌습니다.");
+            currentItem = null;
+        }
+
+    }
+    public void PickupItem()
+    {
+        // 'E' 키가 눌렸을 때
+        if (Input.GetKeyDown(KeyCode.E) && currentItem != null)
+        {
+            Debug.Log("아이템을 주웟습니다" + currentItem.name);
+            // 인벤토리에 아이템 추가
+            inventory.AddItem(currentItem);
+
+            // 아이템 게임 오브젝트를 씬에서 제거
+            Destroy(currentItem);
+
+            // 현재 아이템을 null로 설정
+            currentItem = null;
+        }
+
+
+
+
+        //아이템 줍기
+        //public void ItemPickUp()
+        //{
+        //    RaycastHit hit;
+
+        //    Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward); // 레이의 발사위치는 메인 카메라
+
+        //    Color rayColor = Color.red;
+
+        //    Debug.DrawRay(ray.origin, ray.direction * rayDistance, rayColor); // 레이를 눈에 보이게
+
+        //    // "Item" 레이어만 탐지하도록 레이어 마스크 설정
+        //    int layerMask = LayerMask.GetMask("Item");
+
+        //    if (Physics.Raycast(ray, out hit, rayDistance, layerMask)) // 만약 레이가 item layer를 감지했다면
+        //        {
+        //        Debug.Log($"Hit object: {hit.collider.name}");
+
+        //        // 충돌한 오브젝트의 태그가 "Item"인지 확인
+        //        if (hit.collider.CompareTag("Item"))
+        //        {
+        //            // 리스트에 GameObject 추가
+        //            collectedItems.Add(hit.collider.gameObject);
+        //            Debug.Log($"Collected item: {hit.collider.name}");
+
+
+        //            // 씬에서 GameObject 삭제
+        //            Destroy(hit.collider.gameObject);
+        //        }
+        //    }
+        //}
 
 
     }
 
-
-    
-
-   
-    //아이템 줍기
-    public void ItemPickUp()
+    public void DropItem()
     {
-        RaycastHit hit;
+        // 'G' 키가 눌렸을 때
+        if (Input.GetKeyDown(KeyCode.G) && inventory.GetSelectedItem() != null)
+        {
+            GameObject itemToDrop = inventory.GetSelectedItem();
 
-        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward); // 레이의 발사위치는 메인 카메라
+           // inventory.RemoveItem(inventory.selectedSlot);
 
-        Color rayColor = Color.red;
+            Instantiate(itemToDrop, transform.position + Vector3.forward * 2, Quaternion.identity);
 
-        Debug.DrawRay(ray.origin, ray.direction * rayDistance, rayColor); // 레이를 눈에 보이게
+            // 기존 아이템 오브젝트는 제거 (씬에서 제거된 상태로 유지)
+            Destroy(currentItem);
 
-        // "Item" 레이어만 탐지하도록 레이어 마스크 설정
-        int layerMask = LayerMask.GetMask("Item");
-
-        if (Physics.Raycast(ray, out hit, rayDistance, layerMask)) // 만약 레이가 item layer를 감지했다면
-            {
-            Debug.Log($"Hit object: {hit.collider.name}");
-
-            // 충돌한 오브젝트의 태그가 "Item"인지 확인
-            if (hit.collider.CompareTag("Item"))
-            {
-                // 리스트에 GameObject 추가
-                collectedItems.Add(hit.collider.gameObject);
-                Debug.Log($"Collected item: {hit.collider.name}");
-
-
-                // 씬에서 GameObject 삭제
-                Destroy(hit.collider.gameObject);
-            }
+            // 현재 아이템을 null로 설정
+            currentItem = null;
         }
     }
 
-       
 
 
-
-
-
-
-    
 }
 
 
