@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShopDoor : MonoBehaviour
+public class ShipDoor : MonoBehaviour
 {
 
     [Header("플레이어 게임오브젝트")]
@@ -46,11 +46,13 @@ public class ShopDoor : MonoBehaviour
     {
         if (isDoorOpen)
         {
-            Invoke("Open", 0);
+            //Invoke("Open", 0);//왜일케했징?
+            Open();
         }
         else
         {
-            Invoke("Close", 0);
+            //Invoke("Close", 0);
+            Close();
         }
 
 
@@ -105,12 +107,16 @@ public class ShopDoor : MonoBehaviour
     {
         leftDoor.transform.position = Vector3.Lerp(leftDoor.transform.position, leftClose.position, moneSpd * Time.deltaTime);
         rightDoor.transform.position = Vector3.Lerp(rightDoor.transform.position, rightClose.position, moneSpd * Time.deltaTime);
+        leftDoor.GetComponentInParent<BoxCollider>().enabled = true;
+        rightDoor.GetComponentInParent<BoxCollider>().enabled = true;
     }
 
     void Open()
     {
         leftDoor.transform.position = Vector3.Lerp(leftDoor.transform.position, leftOpen.position, moneSpd * Time.deltaTime);
         rightDoor.transform.position = Vector3.Lerp(rightDoor.transform.position, rightOpen.position, moneSpd * Time.deltaTime);
+        leftDoor.GetComponentInParent<BoxCollider>().enabled = false;
+        rightDoor.GetComponentInParent<BoxCollider>().enabled = false;
     }
 
     #region 기즈모로 거리 그리기

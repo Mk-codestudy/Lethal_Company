@@ -6,24 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/1_ProtoScenes/Main.unity
-    guid: a02ea077338c9bd42935133a07feb026
+    path: Assets/2_AlphaScenes/1.Main.unity
+    guid: 3fc553c0da6b35c4fad2c56f3cbf83e1
   - enabled: 1
-    path: Assets/1_ProtoScenes/Scene_Sample1_ShipContents.unity
-    guid: 585dc58d2b7b1ea4b82d56ef99bfc80e
+    path: Assets/2_AlphaScenes/A_ShipinSpace.unity
+    guid: 2ef6820d67feb55438579a3a9ab4b7b6
   - enabled: 1
-    path: Assets/1_ProtoScenes/Scene_Sample2_FallingSpot.unity
-    guid: a1edb643bbc915e4a8e03f3bdc888244
+    path: Assets/2_AlphaScenes/A_Offense.unity
+    guid: aa0ad9175693c3840b3e2af2a192dd88
   - enabled: 1
-    path: Assets/1_ProtoScenes/Scene_Sample3_MineandTurret.unity
-    guid: 050c34e8ddc0855458a40a1291506b43
-  - enabled: 1
-    path: Assets/1_ProtoScenes/Scene_Sample4_Slime.unity
-    guid: 156ba84c7aca64043bd4e3d188ccc659
-  - enabled: 1
-    path: Assets/1_ProtoScenes/Scene_Sample5_Bee.unity
-    guid: fbe974159d1d78a49836be56da2ef694
-  - enabled: 1
-    path: Assets/1_ProtoScenes/Scene_Sample6_Thumper.unity
-    guid: 97f59a3356bc0f04ba0328c2c45b9501
+    path: Assets/2_AlphaScenes/A_Factory.unity
+    guid: 3aacbbf89846c454596abc9065705d45
   m_configObjects: {}

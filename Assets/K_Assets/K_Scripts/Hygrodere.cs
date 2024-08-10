@@ -66,6 +66,15 @@ public class Hygrodere : MonoBehaviour
         if (dir.magnitude < sight) //슬라임의 시야 내에 플레이어가 있을 때
         {
             cc.Move(dir.normalized * spd * Time.deltaTime); //플레이어를 향해 슬라임이 이동한다.
+                                                            //장애물 회피하며 돌아다니기
+            if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 1.0f))
+            {
+                if (hit.collider.CompareTag("Obstacle")) // 장애물 태그로 감지
+                {
+                    Vector3 avoidance = Vector3.Cross(dir, Vector3.up).normalized;
+                    dir += avoidance * 0.5f; // 회피 벡터를 추가하여 방향 조정
+                }
+            }
         }
         else //없을 때
         {
@@ -73,6 +82,17 @@ public class Hygrodere : MonoBehaviour
             if (patdir.magnitude > 0.1f)
             {
                 cc.Move(patdir.normalized * spd * Time.deltaTime);
+
+                //장애물 회피하며 돌아다니기
+                if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 1.0f))
+                {
+                    if (hit.collider.CompareTag("Obstacle")) // 장애물 태그로 감지
+                    {
+                        Vector3 avoidance = Vector3.Cross(dir, Vector3.up).normalized;
+                        dir += avoidance * 0.5f; // 회피 벡터를 추가하여 방향 조정
+                    }
+                }
+
             }
             else
             {
