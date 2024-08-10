@@ -73,6 +73,7 @@ public class GameManager_Proto : MonoBehaviour
             PlayerDead();
         }
 
+        #region 프로토타입 사용 - 씬 넘기기
         //씬 넘기기
         if (Input.GetKeyDown(KeyCode.F7))            // F4 누르면...
         {
@@ -86,7 +87,7 @@ public class GameManager_Proto : MonoBehaviour
         {
             SceneLethal(1);                         // 다음 씬 스타트
         }
-
+        #endregion
 
 
     }

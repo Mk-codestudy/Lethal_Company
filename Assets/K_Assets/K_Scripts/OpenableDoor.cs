@@ -33,6 +33,9 @@ public class OpenableDoor : MonoBehaviour
     [Header("진척도 슬라이더 UI")]
     public Slider progressSlider; // 진척도를 표시할 Slider
 
+    [Header("UI 캔버스 제어")]
+    public GameObject canvas;
+
     void Start()
     {
         if (player == null)
@@ -58,10 +61,12 @@ public class OpenableDoor : MonoBehaviour
         
         if (distanceToPlayer > interactionDistance)
         {
+            canvas.SetActive(false);
             return;
         }
         else if (Input.GetKey(KeyCode.E)) //문 앞에서 e키를 꾹 누른 채 대기하면 문이 열림.
         {
+            canvas.SetActive(true);
             currentHoldTime += Time.deltaTime; //얼마나 누르고 있나 시간 측정...
 
             if (progressSlider != null)

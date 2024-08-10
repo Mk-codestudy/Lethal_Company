@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Lever : MonoBehaviour
@@ -33,6 +34,9 @@ public class Lever : MonoBehaviour
 
     [Header("함선 연출용 카메라쉐이킹:메인카메라할당")]
     public CameraShake camshake;
+
+    [Header("n번 씬으로 넘어가기")]
+    public int sceneNumber;
 
     void Start()
     {
@@ -81,6 +85,9 @@ public class Lever : MonoBehaviour
                     //함선이 흔들리며 뭔가가 일어난다.
                     //함선 흔들어제끼기
                     camshake.letsShake = true;
+
+                    //인보크로 1초 뒤에 씬넘어가기
+                    Invoke("LoadScene", 1.5f);
                 }
             }
             else
@@ -103,6 +110,12 @@ public class Lever : MonoBehaviour
             print("슬라이더가 안 들어옴!");
         }
     }
+
+    public void LoadScene()
+    {
+        SceneManager.LoadScene(sceneNumber);
+    }
+
 
     #region 기즈모로 거리 그리기
     private void OnDrawGizmos()
