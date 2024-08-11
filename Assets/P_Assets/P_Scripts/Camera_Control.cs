@@ -24,11 +24,11 @@ public class Camera_Control : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
+        if(Input.GetKeyDown(KeyCode.Alpha8))
         {
             ChangeCamTarget(0); // 1인칭 카메라
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             ChangeCamTarget(1); // 3인칭 카메라
         }
