@@ -103,7 +103,9 @@ public class PlayerMove : MonoBehaviour
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Confined; // 커서 가두기
+        //Cursor.lockState = CursorLockMode.Confined; // 커서 가두기
+        Cursor.lockState = CursorLockMode.Locked; // 커서 가두기
+        Cursor.visible = false;
 
         cc = GetComponent<CharacterController>(); // cc 컴포넌트
 
