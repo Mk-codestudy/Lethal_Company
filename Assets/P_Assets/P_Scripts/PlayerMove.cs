@@ -139,6 +139,7 @@ public class PlayerMove : MonoBehaviour
             if (isLadder) // isLadder 상태에서는
             {
                 gravityPower = Physics.gravity; // 중력을 초기화한다.
+                
             }
 
         }
@@ -552,7 +553,7 @@ public class PlayerMove : MonoBehaviour
     {
         float y = Input.GetAxis("Vertical"); // vertical 입력을 하면 y 값을 받는다.
 
-        Vector3 ladderDir = new Vector3(0, y, 0f);  // 방향은 y축이다.
+        Vector3 ladderDir = new Vector3(0, y, -0.05f);  // 방향은 y축이다.
 
         cc.Move(ladderDir * walkSpeed * Time.deltaTime); // ladderdir 방향으로  walk스피드로 움직인다.
 
@@ -579,12 +580,10 @@ public class PlayerMove : MonoBehaviour
 
             collideItem = true; // 아이템에 닿음
             currentItem = other.gameObject; // 현재 들고있는 아이템은 지금 아이템 오브젝트이다.
-
-
-
-
             //currentItem = other.gameObject; // 현재 충돌 중인 아이템을 currentitem변수에 넣기
         }
+
+       
     }
 
     private void OnTriggerExit(Collider other) // 사다리에서 떨어짐,  아이템에서 떨어짐
