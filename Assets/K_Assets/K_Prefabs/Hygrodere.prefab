@@ -125,7 +125,7 @@ MonoBehaviour:
   spd: 3.64
   sight: 30
   patrolRadius: 8
-  damageTime: 0.5
+  damageTime: 0.7
 --- !u!143 &2142812892046309133
 CharacterController:
   m_ObjectHideFlags: 0

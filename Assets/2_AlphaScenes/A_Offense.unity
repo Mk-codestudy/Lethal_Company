@@ -2736,6 +2736,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5577418771838530241, guid: 29126cfd783336b4b817282b4469dbd0,
         type: 3}
+      propertyPath: sight
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577418771838530241, guid: 29126cfd783336b4b817282b4469dbd0,
+        type: 3}
+      propertyPath: sightHome
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577418771838530241, guid: 29126cfd783336b4b817282b4469dbd0,
+        type: 3}
       propertyPath: hivetarget
       value: 
       objectReference: {fileID: 805350355}
@@ -2744,6 +2754,16 @@ PrefabInstance:
       propertyPath: playertarget
       value: 
       objectReference: {fileID: 871038299}
+    - target: {fileID: 5577418771838530241, guid: 29126cfd783336b4b817282b4469dbd0,
+        type: 3}
+      propertyPath: showHomeGizmo
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5577418771838530241, guid: 29126cfd783336b4b817282b4469dbd0,
+        type: 3}
+      propertyPath: showSightGizmo
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6470712103903032583, guid: 29126cfd783336b4b817282b4469dbd0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6354,12 +6374,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneNumber: 3
   player: {fileID: 96204318}
-  interactionDistance: 2
+  interactionDistance: 3
   showGizmoSphare: 0
   showGizmoLine: 0
   doorHoldTime: 1.5
   progressSlider: {fileID: 1143453942}
   canvas: {fileID: 1795718875}
+  mapManager: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
