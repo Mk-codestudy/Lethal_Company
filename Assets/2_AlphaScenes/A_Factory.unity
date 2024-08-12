@@ -5922,12 +5922,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9cc0a099e5889149ad41b987dc24405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  x: 0
-  v: 0
-  walkSpeed: 5
-  runSpeed: 15
-  currentSpeed: 20
-  rotSpeed: 500
 --- !u!95 &1840072865
 Animator:
   serializedVersion: 5
@@ -6235,17 +6229,21 @@ MonoBehaviour:
   runSpeed: 15
   currentSpeed: 20
   rotSpeed: 300
+  moveDir: {x: 0, y: 0, z: 0}
   maxHp: 0
   maxStamina: 100
   currentHp: 0
   currentStamina: 0
   hpBar: {fileID: 1443374994}
   staminaSlider: {fileID: 215488723}
-  moveDir: {x: 0, y: 0, z: 0}
-  jumpHeight: 35
+  jumpHeight: 3
   maxJump: 1
-  gravityVelocity: 100
-  item: {fileID: 0}
+  gravityVelocity: 2
+  rayDistance: 10
+  boxSize: {x: 10, y: 5, z: 7}
+  RightHand: {fileID: 0}
+  inventory: {fileID: 0}
+  currentState: 0
 --- !u!143 &1895365145
 CharacterController:
   m_ObjectHideFlags: 0
