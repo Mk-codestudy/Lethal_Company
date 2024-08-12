@@ -86,4 +86,6 @@ public class DropPod : MonoBehaviour // droppod 가 dropstart 포인트에서 dropendp
         Instantiate(item3, regenPos3.position, regenPos3.rotation); // 
         Instantiate(item4, regenPos4.position, regenPos4.rotation); //
     }
+
+    
 }
