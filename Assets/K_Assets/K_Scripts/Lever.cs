@@ -113,6 +113,21 @@ public class Lever : MonoBehaviour
 
     public void LoadScene()
     {
+
+        if (sceneNumber == 1)
+        {
+            GameObject clock = GameObject.Find("MapUI");
+
+            if (clock != null)
+            {
+                clock.SetActive(false);
+            }
+            else
+            {
+                Debug.Log("시계 안 찾아짐!");
+            }
+        }
+
         SceneManager.LoadScene(sceneNumber);
     }
 

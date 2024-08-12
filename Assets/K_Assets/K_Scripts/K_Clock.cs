@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class K_Clock : MonoBehaviour
 {
+    public static K_Clock instance;  // Singleton 인스턴스
+
     public int time = 8;
     public int min = 0;
 
@@ -24,9 +26,18 @@ public class K_Clock : MonoBehaviour
     public Text ampmtext;
 
 
-    void Start()
+    void Awake()
     {
-        
+        // Singleton 패턴을 구현하는 부분
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);  // 씬 전환 시 파괴되지 않도록 설정
+        }
+        else
+        {
+            Destroy(gameObject);  // 이미 인스턴스가 존재한다면 파괴
+        }
     }
 
     void Update()
@@ -39,7 +50,7 @@ public class K_Clock : MonoBehaviour
             currenttime = 0;
         }
 
-        if (min > 60) //60분 지날 때마다
+        if (min >= 60) //60분 지날 때마다
         {
             time += 1; //1시간 증가하고
             min = min % 60; //나머지 분 소중하게 모아두기
@@ -82,13 +93,21 @@ public class K_Clock : MonoBehaviour
             }
         }
 
-        if (!ispm)
+
+        // AM/PM 텍스트 업데이트
+        ampmtext.text = ispm ? "PM" : "AM";
+
+
+        if (ispm && time == 22)
         {
-            ampmtext.text = "AM";
+            Debug.Log("제한시간 종료 전 경고!");
         }
-        else
+
+        if (ispm && time == 23)
         {
-            ampmtext.text = "PM";
+            Debug.Log("제한시간 종료!");
+            
         }
+
     }
 }

@@ -9,7 +9,6 @@ public class EnterFactory : MonoBehaviour
     [Header("n번 씬으로 가기!")]
     public int sceneNumber = 0;
 
-
     [Header("플레이어 게임오브젝트")]
     public Transform player;
 
@@ -34,6 +33,10 @@ public class EnterFactory : MonoBehaviour
     [Header("UI 캔버스 제어")]
     public GameObject canvas;
 
+    [Header("맵 상태 저장 관련")]
+    public MapManager mapManager;
+
+
     void Start()
     {
         if (player == null)
@@ -49,6 +52,10 @@ public class EnterFactory : MonoBehaviour
             progressSlider.value = 0f;
             progressSlider.gameObject.SetActive(false); // 초기에는 비활성화
         }
+
+        //mapManager.LoadMapState();
+
+
     }
 
     void Update()
@@ -74,6 +81,8 @@ public class EnterFactory : MonoBehaviour
 
             if (currentHoldTime > doorHoldTime) //내가 정한 시간을 넘어가면!
             {
+                //저장하기
+                //mapManager.SaveMapState(); //안되겟다.
                 //씬 넘어가기
                 SceneManager.LoadScene(sceneNumber);
             }

@@ -102,6 +102,9 @@ public class Thumper : MonoBehaviour
 
         // 패트롤 초기화
         patrolCenter = transform.position;
+        Vector2 newPos = UnityEngine.Random.insideUnitCircle * patrolRadius;
+        patrolNext = patrolCenter + new Vector3(newPos.x, 0, newPos.y);
+
         idletime = UnityEngine.Random.Range(1.0f, 4.0f); // 초기 idletime 설정
 
         searchingTime = setsearchingTime; //teace 관련 변수 초기화
@@ -180,17 +183,16 @@ public class Thumper : MonoBehaviour
             cc.Move(dir.normalized * patrolSpd * Time.deltaTime);
             SmoothRotateToYou(dir);
 
+            //장애물 감지해서 패트롤 끝내기
+            if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 1.0f))
+            {
+                SetNewPatrolPoint();
+            }
+
         }
         else
         {
-            // 다음 패트롤 위치 정하기
-            Vector2 newPos = UnityEngine.Random.insideUnitCircle * patrolRadius;
-            patrolNext = patrolCenter + new Vector3(newPos.x, 0, newPos.y);
-
-            thpstate = ThpState.Idle; //아이들로 바꾸고
-            idletime = UnityEngine.Random.Range(1.0f, 4.0f); //아이들 시간만 랜덤으로 지정해주면 됨
-            print("Debug_Idletime : " + idletime);
-            print("ThpState : Patrol >>>> Idle");
+            SetNewPatrolPoint();
 
         }
 
@@ -229,6 +231,18 @@ public class Thumper : MonoBehaviour
             }
         }
 
+    }
+
+    // 새로운 패트롤 지점을 설정하는 함수
+    void SetNewPatrolPoint()
+    {
+        Vector2 newPos = UnityEngine.Random.insideUnitCircle * patrolRadius;
+        patrolNext = patrolCenter + new Vector3(newPos.x, 0, newPos.y);
+
+        thpstate = ThpState.Idle; // 아이들 상태로 전환
+        idletime = UnityEngine.Random.Range(1.0f, 3.0f); // 새로운 아이들 시간 설정
+        print("Debug_Idletime : " + idletime);
+        print("ThpState : Patrol >>>> Idle");
     }
 
 
@@ -297,6 +311,19 @@ public class Thumper : MonoBehaviour
         cc.Move(dir.normalized * traceSpd * Time.deltaTime);
 
         SmoothRotateToYou(dir);
+
+        ////장애물 감지해서 돌기
+        //if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 2.0f))
+        //{
+        //    if (hit.collider.CompareTag("Obstacle")) // 장애물 태그로 감지
+        //    {
+        //        Vector3 avoidance = Vector3.Cross(dir, Vector3.up).normalized;
+        //        dir = Vector3.Lerp(dir, dir + avoidance, 5f); // 기존 방향과 회피 방향을 보간하여 새로운 방향 생성
+        //        dir = dir.normalized;
+        //        cc.Move(dir * patrolSpd * Time.deltaTime);
+        //    }
+        //}
+
 
         if (dir.magnitude < attackRange)
         {

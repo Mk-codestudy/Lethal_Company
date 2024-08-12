@@ -102,6 +102,11 @@ public class GameManager_Proto : MonoBehaviour
 
         //UI실행
         PlayerDeadUI();
+
+        //인보크 1초 뒤에 게임오버 연출(함선 떠나기)
+
+        Invoke("RoundOver", 1.5f);
+
     }
     public void PlayerDeadUI()
     {
@@ -152,6 +157,23 @@ public class GameManager_Proto : MonoBehaviour
          playerHP -= enumDamage; //적 데미지만큼 플레이어 HP 차감
     }
 
+
+    //함선으로 돌아가는 씬 조절 함수
+    public void RoundOver()
+    {
+        SceneManager.LoadScene(1);
+
+        GameObject clock = GameObject.Find("MapUI");
+
+        if (clock != null)
+        {
+            clock.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("시계 안 찾아짐!");
+        }
+    }
 
 
     #region 씬 조절 함수 

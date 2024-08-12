@@ -83,7 +83,7 @@ public class Mine : MonoBehaviour
         {
             rb.isKinematic = false;
             rb.useGravity = true;
-            rb.AddExplosionForce(800, transform.position, radius, 60); //(폭발 파워, 폭발의 중심위치, 각도, 위로 튀어오를 거리값)
+            rb.AddExplosionForce(750, transform.position, radius, 15); //(폭발 파워, 폭발의 중심위치, 각도, 위로 튀어오를 거리값)
             explosionparticle.SetActive(true);
             Destroy(gameObject.transform.GetChild(0).gameObject);//지뢰 몸은 사라짐
             gameObject.GetComponent<BoxCollider>().enabled = false; //콜라이더 비활성화
