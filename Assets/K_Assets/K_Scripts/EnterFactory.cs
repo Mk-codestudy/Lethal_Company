@@ -32,9 +32,7 @@ public class EnterFactory : MonoBehaviour
 
     [Header("UI 캔버스 제어")]
     public GameObject canvas;
-
-    [Header("맵 상태 저장 관련")]
-    public MapManager mapManager;
+    
 
 
     void Start()
