@@ -18,7 +18,7 @@ using UnityEngine.UI;
 public class PlayerMove : MonoBehaviour
 {
 
-   
+    public Animator anime; // 애니메이터
 
 
     [Header("플레이어 이동 관련 변수")]
@@ -109,7 +109,7 @@ public class PlayerMove : MonoBehaviour
 
         cc = GetComponent<CharacterController>(); // cc 컴포넌트
 
-        //animator = GetComponent<Animator>();  // animator controller 가 들어가 있는 플레이어 모델링을 이곳에 집어 넣는다.
+        anime = GetComponent<Animator>();  // animator controller 가 들어가 있는 플레이어 모델링을 이곳에 집어 넣는다.
 
         gravityPower = Physics.gravity;  // 중력 초기화 
 
@@ -304,6 +304,10 @@ public class PlayerMove : MonoBehaviour
         x = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
 
+        //anime.SetFloat("MoveHorizontal" , 0.1f);
+        //anime.SetFloat("MoveVertical" , 0.1f );
+        //anime.SetFloat("DirLength", 0f);
+
         Vector3 movedir = new Vector3(x, 0f, v);
 
         movedir = transform.TransformDirection(movedir); // 로컬 좌표 이동
@@ -333,28 +337,21 @@ public class PlayerMove : MonoBehaviour
                 {
                     isRunning = false;
                     currentSpeed = walkSpeed;
-                    // animator.SetFloat("MoveFloat", 0.1f);
-
-                    // animator.SetBool("run", false);
-                    // animator.SetBool("walk", true);
+                    
                 }
 
             }
             else
             {
                 currentSpeed = walkSpeed;
-                // animator.SetFloat("MoveFloat", 0f);
-
-                //isMoving = true;
-                // animator.SetBool("walk", true);
-
+               
             }
         }
         else
         {
             isIdle = true;
 
-            //  animator.SetBool("idle", true);
+           
         }
 
 
