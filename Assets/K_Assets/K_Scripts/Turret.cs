@@ -32,7 +32,7 @@ public class Turret : MonoBehaviour
     bool alreadyplaySearch;
 
     //fire
-    float shootTime = 0;
+    //float shootTime = 0;
     float shootDelay = 0.3f;
     //fire 오디오 관련 변수
     bool alreadyplayFire;

@@ -29,6 +29,8 @@ public class Mine : MonoBehaviour
     AudioSource minesound;
     public AudioClip[] minesoundclip;
 
+    public GameObject lights;
+
 
     private void Start()
     {
@@ -50,6 +52,8 @@ public class Mine : MonoBehaviour
             minesound.clip = minesoundclip[0];
             minesound.Play();
             currenttime = 0;
+            lights.SetActive(true);
+            Invoke("Offlight", 0.2f);
         }
 
     }
@@ -95,6 +99,12 @@ public class Mine : MonoBehaviour
             Debug.LogWarning("mine :: 인식된 Rigidbidy 없음!");
         }
     }
+
+    public void Offlight()
+    {
+        lights.SetActive(false);
+    }
+
 }
 
 

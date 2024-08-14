@@ -136,9 +136,9 @@ public class GameManager_Proto : MonoBehaviour
 
     //플레이어가 때리는 함수
     //플레이어가 삽으로 때리는 스크립트에 gm.playerhit(dumperHP) 적는 식으로 사용
-    public void PlayerHit(float EnumHP)
+    public void PlayerHit()
     {
-        EnumHP -= 15; //데미지 가하기
+        dumperHP -= 15; //데미지 가하기
 
     }
 
