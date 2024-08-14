@@ -1674,6 +1674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 832981d2f0249d044b5117bac0651897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   walkSpeed: 5
   runSpeed: 15
   currentSpeed: 20
@@ -1687,9 +1688,9 @@ MonoBehaviour:
   staminaSlider: {fileID: 640892904}
   jumpHeight: 5
   maxJump: 1
-  gravityVelocity: 3
+  gravityVelocity: 1
   rayDistance: 10
-  boxSize: {x: 10, y: 5, z: 7}
+  boxSize: {x: 20, y: 5, z: 20}
   RightHand: {fileID: 1276091210}
   inventory: {fileID: 1016541212}
   currentState: 4
@@ -1734,7 +1735,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
