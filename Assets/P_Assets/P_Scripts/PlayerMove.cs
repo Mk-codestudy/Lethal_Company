@@ -77,7 +77,7 @@ public class PlayerMove : MonoBehaviour
 
     public Inventory inventory; // 인벤토리 스크립트 참조
 
-
+    public int num; // 아이템 슬롯의 번호 ( 1~4 )
 
     CharacterController cc;
 
@@ -85,7 +85,6 @@ public class PlayerMove : MonoBehaviour
     public PlayerState currentState; // 플레이어가 시작하는 처음 상태
 
     private object playerScan;
-
 
 
 
@@ -125,6 +124,7 @@ public class PlayerMove : MonoBehaviour
 
 
         cc = GetComponent<CharacterController>(); // cc 컴포넌트
+
 
 
         gravityPower = Physics.gravity;  // 중력 초기화 
@@ -178,13 +178,16 @@ public class PlayerMove : MonoBehaviour
 
         }
 
-        if(Climb)
+        if (Climb)
         {
             ClimbLadder(); // 사다리 타기
         }
 
-        PickupItem(); // 아이템 줍기
-        DropItem(); // 아이템 버리기
+        //PickupItem(); // 아이템 줍기
+        DropItem(num); // 아이템 버리기
+        StoreItemInventory(); // 아이템 인벤토리에 추가하기
+        //EquipItem(num);
+
         Rotate(); // 마우스 방향으로 회전
 
         Jump(); // 캐릭터 점프
@@ -193,6 +196,23 @@ public class PlayerMove : MonoBehaviour
         UpdateUI(); // ui를 실시간 업데이트
         Scan();
 
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            num = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            num = 1;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            num = 2;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            num = 3;
+        }
 
 
 
@@ -211,7 +231,7 @@ public class PlayerMove : MonoBehaviour
         movedir = transform.TransformDirection(movedir); // 로컬 좌표 이동
         movedir.Normalize(); // 0 ~ 1 사이의 값만 나온다.
 
-       // movedir.y = yPos; // 계속해서 아래로 중력 가속도를 받음    
+        // movedir.y = yPos; // 계속해서 아래로 중력 가속도를 받음    
 
         cc.Move(movedir * walkSpeed * Time.deltaTime);  // 걷는 속도로 캐릭터 움직임
 
@@ -341,7 +361,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    
+
 
     void Rotate()
     {
@@ -437,6 +457,7 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             Vector3 boxCenter = (Camera.main.transform.position + Camera.main.transform.forward); // 메인 카메라의 정면방향으로 box를 그린다.
+
             Collider[] hitColliders = Physics.OverlapBox(boxCenter, boxSize / 2, Quaternion.identity, 1 << 6); // 감지한 콜라이더를 담을 배열을 만든다.
 
 
@@ -599,10 +620,16 @@ public class PlayerMove : MonoBehaviour
 
         if (other.CompareTag("Item")) // item 태그의 콜라이더와 충돌했다면
         {
-            Debug.Log("아이템에 닿았습니다.");
+            //Debug.Log("아이템에 닿았습니다.");
 
             collideItem = true; // 아이템에 닿았느지 체크
-            currentItem = other.gameObject; // 현재 충돌한 아이템
+
+            if (currentItem == null)
+            {
+                currentItem = other.gameObject; // 현재 충돌한 아이템은 currentItem
+                Debug.Log(" currentitem을 추가했습니다.");
+            }
+
 
         }
 
@@ -614,7 +641,7 @@ public class PlayerMove : MonoBehaviour
         {
             Climb = true;
         }
-       
+
     }
 
     private void OnTriggerExit(Collider other) // 사다리에서 떨어짐,  아이템에서 떨어짐
@@ -622,16 +649,17 @@ public class PlayerMove : MonoBehaviour
         if (other.gameObject.CompareTag("Ladder")) // 사다리 콜라이더에서 떨어졌을때
         {
             print("사다리에서 나왔습니다.");
-           
+
         }
 
         // 아이템과의 충돌이 종료된 경우, 현재 아이템을 null로 설정
-        if (other.CompareTag("Item")) //&& other.gameObject == currentItem)
+        if (other.CompareTag("Item") && other.gameObject == currentItem)
         {
             Debug.Log("아이템에서 떨어졌습니다.");
 
             collideItem = false;
             currentItem = null;
+            Debug.Log("currentitem 이 null입니다");
             //currentItem = null;
         }
 
@@ -684,7 +712,7 @@ public class PlayerMove : MonoBehaviour
 
     }
 
-    public void DropItem() // 아이템 버리기
+    public void DropItem(int num) // 아이템 버리기
     {
 
         if (Input.GetKeyDown(KeyCode.G) && holdItem != null)  // G를 누르고 들고 있는 아이템이 null이 아니라면
@@ -694,6 +722,16 @@ public class PlayerMove : MonoBehaviour
             holdItem.transform.SetParent(null); // Righthand에서 벗어남
             Vector3 dropPos = transform.position + transform.forward * 3f; // 플레이어의 전방 3f의 거리앞에서 떨어뜨릴 지점을 생성
             holdItem.transform.position = dropPos; // hold 아이템의 위치를 droppos로 이동
+
+            // 배열에서 아이템을 제거
+            if (num >= 0 && num < inventory.inventory.Length) // 유효한 인덱스인지 확인
+            {
+                inventory.RemoveItem(num);
+            }
+
+
+            holdItem = null; // 현재 손에 든 아이템을 null로 설정
+
 
 
 
@@ -720,20 +758,186 @@ public class PlayerMove : MonoBehaviour
 
     }
 
-    public void StoreItemInventory() // item을 이벤토리에 저장
+
+
+
+    public void StoreItemInventory() // item을 인벤토리에 저장  // 정상작동
     {
+        if (currentItem != null && collideItem) // 만약, 아이템과 충돌하고, 현재 아이템이 null 이 아니라라면
+        {
+            if (Input.GetKeyDown(KeyCode.E)) // e를 누르면
+            {
+                inventory.AddItem(currentItem);
+                currentItem.SetActive(false);
+                currentItem = null;
+            }
+
+        }
 
     }
-     // 아이템을 줍는다
-     // 4칸짜리 배열
-     // 아이템을 주우면
-     // 해당 아이템을 씬에서 비활성화 하고
-     // 배열에 담는다
 
-    // 배열에 0(1) 1(2) 2(3) 3(4) 번호를 할당하고
-    // 번호를 누르면 해당 칸에 있는 아이템을
-    // RIghthand position 으로 이동시키고
-    // 활성화 한다.
+    //public void EquipItem(int num)  /// 수정필요
+    //{
+    //    GameObject equipItem = inventory.GetItem(num); // getitem의 매개변수와 equip 아이템의 매개변수를 맞춘다
+
+    //    if (equipItem != null) // 호출한 아이템이 null이 아닌 경우
+    //    {
+    //        if (holdItem != null) // 현재 손에 아이템이 있을 경우
+    //        {
+    //            // 현재 손에 든 아이템을 비활성화하고 부모를 제거
+    //            holdItem.SetActive(false);
+    //            holdItem.transform.SetParent(null); // 손에서 부모 제거
+    //        }
+
+    //        // 새 아이템을 손에 장착
+    //        holdItem = equipItem;
+    //        holdItem.transform.position = RightHand.position;
+    //        holdItem.transform.rotation = RightHand.rotation;
+    //        holdItem.SetActive(true);
+    //        holdItem.transform.SetParent(RightHand); // 오른손을 부모로 설정
+    //    }
+    //    else
+    //    {
+    //        // 호출한 아이템이 null일 경우
+    //        if (holdItem != null)
+    //        {
+    //            // 현재 손에 든 아이템이 있으면 이를 비활성화하고 부모를 제거
+    //            holdItem.SetActive(false);
+    //            holdItem.transform.SetParent(null); // 손에서 부모 제거
+    //            holdItem = null; // 손에 든 아이템 초기화
+    //        }
+    //    }
+
+
+
+
+
+
+        //if (equipitem != null) // 호출한 물건이 null이 아니고
+        //{
+        //    if (holdItem == null)
+        //    {
+        //        holdItem = equipitem; // 배열에서 호출한 아이템이 holditem 이다
+
+        //        holdItem.SetActive(true);
+        //    }
+        //}
+        //else if (equipitem != null) // 호출한 물건이 null이 아니고
+        //{
+        //    if (holdItem != null) // 손에 무엇을 들고 있고 다른 번호를 눌러 배열에 있는 아이템을 호출했다면
+        //    {
+        //        holdItem.SetActive(false);// 현재 들고있는 아이템을 비활성화 시키고
+
+        //        holdItem = equipitem; // 배열에서 호출한 아이템이 holditem 이다
+        //    }
+        //}
+        //else if (equipitem == null)
+        //{
+        //    if (holdItem != null)
+        //    {
+        //        return;
+        //    }
+        //}
+
+
+    }
+
+
+
+
+
+        //    if (equipitem != null) // 배열에서 호출한 아이템이 null 이아니고
+        //{
+        //    if (holdItem != null) // 빈 손이 아니라면
+        //    {
+        //        inventory.AddItem(holdItem); // 현재 손에 들고있는 아이템을 배열에 담는다
+        //        holdItem.SetActive(false);
+        //        holdItem.transform.SetParent(null);  //holditem 부모를 제거
+        //    }
+
+        //    //그리고 배열에서 호출한 아이템을 손에 든다
+
+        //    holdItem = equipitem;
+        //    holdItem.transform.position = RightHand.position;
+        //    holdItem.transform.rotation = RightHand.rotation;
+        //    holdItem.SetActive(true);
+        //    holdItem.transform.SetParent(RightHand); // 오른손을 부모로 잡음
+        //}
+        //else
+        //{
+        //    if (holdItem != null) // 들고 있는 아이템이 있다면
+        //    {
+        //        inventory.AddItem(holdItem);
+        //        holdItem.SetActive(false);
+        //        holdItem.transform.SetParent(null); //holditem 부모를 제거
+        //        holdItem = null;
+        //    }
+        //}
+    
+
+
+
+
+
+        //if (Input.GetKeyDown(KeyCode.Alpha1)) // 1을 누르면
+        //    {
+        //        if(holdItem == null) // 만약, 손에 든 아이템이 없다면
+        //        {
+        //           holdItem = inventory.GetItem(0); // 0번에 있는 아이템을 가져온다. 어디로?
+        //            holdItem.transform.position = RightHand.transform.position; // 오른손의 위치로
+        //            holdItem.transform.rotation =  RightHand.transform.rotation;
+        //            holdItem.SetActive(true);
+
+        //        }
+        //        else if(holdItem != null) // 만약, 손에 item을 들고 있다면
+        //        {
+        //            inventory.AddItem(holdItem); // 현재, 들고 있는 물건을 다시 넣고
+        //            holdItem.SetActive(false);
+        //            holdItem = null;
+        //        }
+
+
+        //}
+
+
+    
+
+
+
+
+
+    // collideitem 으로 collide 충돌확인
+    // 현재 닿은 아이템을 currentitem 변수에 복사
+    // 만약, 닿은 collider의 tag 가 item 이면
+    // 미리 만들어둔 인벤토리 배열에 담는다.
+    // 주운 오브젝트는 월드에서 SetActive(false)
+
+
+// 각 배열에 번호를 할당 - player.update
+// 해당 번호를 누르면 
+// holditem 이라는 변수를 만들고 그 안에 담는다
+// holditem의 위치는 미리 만들어둔 오른손의 위치(Righthand Position)
+
+// 만약, 1번을 눌렀다가 2번을 누르면
+// hold item 을 빈칸을찾아(for i == null) 넣고
+// 2번 오브젝트를 꺼낸다.
+
+
+
+// trigger는 각 오브젝트에 만들어 두는게 낫다
+
+
+
+// 아이템을 줍는다
+// 4칸짜리 배열
+// 아이템을 주우면
+// 해당 아이템을 씬에서 비활성화 하고
+// 배열에 담는다
+
+// 배열에 0(1) 1(2) 2(3) 3(4) 번호를 할당하고
+// 번호를 누르면 해당 칸에 있는 아이템을
+// RIghthand position 으로 이동시키고
+// 활성화 한다.
 
 
 
@@ -746,7 +950,7 @@ public class PlayerMove : MonoBehaviour
 
 
 
-}
+
 
 
 
