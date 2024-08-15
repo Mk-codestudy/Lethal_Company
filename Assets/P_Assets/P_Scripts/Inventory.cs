@@ -6,6 +6,7 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     public GameObject[] inventory;
+    private int selectedIndex = -1;
 
     public void Start()
     {     
@@ -41,10 +42,11 @@ public class Inventory : MonoBehaviour
 
    
 
-    public GameObject GetItem(int index)  // 배열 아이템 가져오기 holditem 변수를 통해 캐릭터가 아이템을 들고 있는것 처럼 표현
+    public GameObject SelectItem(int index)  // 배열 아이템 가져오기 holditem 변수를 통해 
     {
         if (index >= 0 && index < inventory.Length)
         {
+            selectedIndex = index; // 선택된 인덱스를 selectedindex 에 저장
             return inventory[index];
         }
         return null;

@@ -1697,6 +1697,8 @@ MonoBehaviour:
   rayDistance: 10
   boxSize: {x: 20, y: 5, z: 20}
   RightHand: {fileID: 1276091210}
+  selectedItem: {fileID: 0}
+  holdItem: 0
   inventory: {fileID: 1106959822}
   num: 0
   currentState: 0
@@ -2510,6 +2512,11 @@ PrefabInstance:
     - target: {fileID: 4226178482158342095, guid: 9ef430dea778da94cad3f3dd902e188f,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377177769719855147, guid: 9ef430dea778da94cad3f3dd902e188f,
+        type: 3}
+      propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
