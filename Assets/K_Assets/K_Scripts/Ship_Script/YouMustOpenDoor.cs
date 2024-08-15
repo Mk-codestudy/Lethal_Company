@@ -9,10 +9,13 @@ public class YouMustOpenDoor : MonoBehaviour
     float currenttime;
     public ShipDoor shipdoor;
 
-    void Update()
+    private void Start()
     {
         Invoke("OpenDoor", 2.0f);
+    }
 
+    void Update()
+    {
         if (!shipdoor.isDoorOpen)
         {
             currenttime += Time.deltaTime;

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Hygrodere : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Hygrodere : MonoBehaviour
 
     [Header("애너미 타겟")]
     public Transform target;
+    //public NavMeshAgent smith;
 
     [Header("슬라임 스피드")]
     [Range(0.5f, 4.0f)]
@@ -43,6 +45,18 @@ public class Hygrodere : MonoBehaviour
             Debug.LogWarning("Slime(Hygrodere): 타겟 변수 누락!!");
         }
 
+        //smith = GetComponent<NavMeshAgent>(); //AI
+
+        //if (smith != null)
+        //{
+        //    smith.speed = spd;
+        //    smith.angularSpeed = 300;
+        //    smith.autoBraking = true;
+        //    smith.autoTraverseOffMeshLink = false;
+        //    smith.stoppingDistance = 0.4f;
+        //    smith.acceleration = 1.0f;
+        //}
+
         //패트롤
         patrolCenter = transform.position; //중간 지점을 캐싱
         patrolNext = patrolCenter; //시작 위치가 다음 위치가 되도록 한다.
@@ -65,6 +79,7 @@ public class Hygrodere : MonoBehaviour
         
         if (dir.magnitude < sight) //슬라임의 시야 내에 플레이어가 있을 때
         {
+            //smith.SetDestination(target.position);
             cc.Move(dir.normalized * spd * Time.deltaTime); //플레이어를 향해 슬라임이 이동한다.
                                                             //장애물 회피하며 돌아다니기
             if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 1.0f))
@@ -122,15 +137,15 @@ public class Hygrodere : MonoBehaviour
             }
         }
 
-        IEnumerator ApplyDamage()
+    IEnumerator ApplyDamage()
+    {
+        while (isPlayerInZone)
         {
-            while (isPlayerInZone)
-            {
-                yield return new WaitForSeconds(damageTime);
+            yield return new WaitForSeconds(damageTime);
             GameManager_Proto.gm.PlayerOnDamaged();
             GameManager_Proto.gm.AnemHit();
             Debug.Log("Slime :: 플레이어 데미지 입음!");
-            }
         }
+    }
 
 }

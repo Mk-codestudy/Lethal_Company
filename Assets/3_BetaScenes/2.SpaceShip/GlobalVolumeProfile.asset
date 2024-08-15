@@ -62,6 +62,7 @@ MonoBehaviour:
   components:
   - {fileID: 1881579288749618558}
   - {fileID: -32820517437979890}
+  - {fileID: 4734739552042731879}
 --- !u!114 &1881579288749618558
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -102,3 +103,37 @@ MonoBehaviour:
   maxNits:
     m_OverrideState: 0
     m_Value: 1000
+--- !u!114 &4734739552042731879
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb2952b95454955ba507c3d96778a76, type: 3}
+  m_Name: VhsVol
+  m_EditorClassIdentifier: 
+  active: 0
+  _weight:
+    m_OverrideState: 1
+    m_Value: 0.428
+  _bleed:
+    m_OverrideState: 0
+    m_Value: 1
+  _rocking:
+    m_OverrideState: 0
+    m_Value: 0
+  _tape:
+    m_OverrideState: 0
+    m_Value: 1
+  _noise:
+    m_OverrideState: 0
+    m_Value: 0.5
+  _flickering:
+    m_OverrideState: 0
+    m_Value: 0
+  _glitch:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 0, b: 0, a: 1}

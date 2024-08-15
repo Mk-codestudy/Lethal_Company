@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.AI;
 using static UnityEngine.GraphicsBuffer;
 
 public class Thumper : MonoBehaviour
@@ -39,6 +40,8 @@ public class Thumper : MonoBehaviour
     }
     [Header("덤퍼 Enum")]
     public ThpState thpstate;
+    public Animator animator;
+    public NavMeshAgent smith;
 
     [Header("에너미타겟")]
     public Transform target;
@@ -47,6 +50,8 @@ public class Thumper : MonoBehaviour
     [Range (5.0f, 15.0f)]
     public float sightRot = 5f;
     public float sightDis = 15.0f;
+    [Header("덤퍼 시야 Gizmo")]
+    public bool drawsight;
 
     //Idle 관련 변수
     public float currentTime = 0;
@@ -54,9 +59,13 @@ public class Thumper : MonoBehaviour
 
 
     //Patrol 관련 변수
+    [Header("덤퍼 Patrol 범위")]
+    [Range (3.0f, 15.0f)]
     public float patrolRadius = 6.0f;
     Vector3 patrolCenter;
     Vector3 patrolNext;
+    [Header("덤퍼 범위 Gizmo")]
+    public bool drawrange;
     [Header("덤퍼 Patrol 속도")]
     [Range(2.0f, 8.0f)]
     public float patrolSpd = 3.0f;
@@ -76,8 +85,8 @@ public class Thumper : MonoBehaviour
     public float traceSpd = 10.0f;
 
     [Header("회전 속도")]
-    [Range(1.0f, 8.0f)]
-    public float rotSpd = 5.0f;
+    [Range(100.0f, 400.0f)]
+    public float rotSpd = 300.0f;
 
     [Header("공격 범위")]
     public float attackRange = 1.5f;
@@ -86,19 +95,34 @@ public class Thumper : MonoBehaviour
     [Header("공격 딜레이")]
     public float attackDelaytime = 1.0f;
 
+    [Header("덤퍼 사운드클립")]
+    public AudioClip roar;
+    public AudioClip attackSound;
+    public AudioClip hitSound;
+    public AudioClip dieSound;
 
     //캐싱 관련 변수
     CharacterController cc;
-    AudioSource audioSource;
 
     //덤퍼 오디오
+    AudioSource audioSource;
 
 
     void Start()
     {
-        cc = GetComponent<CharacterController>();
-        audioSource = GetComponent<AudioSource>();
+        cc = GetComponent<CharacterController>(); //캐릭터 컨트롤러
+        audioSource = GetComponent<AudioSource>(); //오디오소스
+        smith = GetComponent<NavMeshAgent>(); //AI
 
+        if (smith != null)
+        {
+            smith.speed = patrolSpd;
+            smith.angularSpeed = rotSpd;
+            smith.autoBraking = true;
+            smith.autoTraverseOffMeshLink = false;
+            smith.stoppingDistance = 0.4f;
+            smith.acceleration = 3.0f;
+        }
 
         // 패트롤 초기화
         patrolCenter = transform.position;
@@ -125,7 +149,7 @@ public class Thumper : MonoBehaviour
                 Scream();
                 break;
             case ThpState.Rush:
-                Rush();
+                //Rush();
                 break;
             case ThpState.Trace:
                 Trace();
@@ -137,10 +161,10 @@ public class Thumper : MonoBehaviour
                 AttackDelay();
                 break;
             case ThpState.Damaged:
-                Damaged();
+                //Damaged();
                 break;
             case ThpState.Dead:
-                Dead();
+                //Dead();
                 break;
         }
     }
@@ -162,6 +186,8 @@ public class Thumper : MonoBehaviour
             thpstate = ThpState.Patrol;
             print("ThpState : Idle >>> Patrol");
             // 패트롤 지점 설정
+            animator.SetBool("IsPatrol", true);
+
         }
 
     }
@@ -176,12 +202,15 @@ public class Thumper : MonoBehaviour
 
         //선택된 지점으로 이동한다.
         Vector3 dir = patrolNext - transform.position;
-        dir.y = 0;
+        //dir.y = 0;
 
-        if (dir.magnitude > 0.1f)
+        if (dir.magnitude > 0.5f)
         {
-            cc.Move(dir.normalized * patrolSpd * Time.deltaTime);
-            SmoothRotateToYou(dir);
+            //cc.Move(dir.normalized * patrolSpd * Time.deltaTime);
+            //SmoothRotateToYou(dir);
+
+            //Nav로 움직이기
+            smith.SetDestination(patrolNext);
 
             //장애물 감지해서 패트롤 끝내기
             if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 1.0f))
@@ -193,9 +222,7 @@ public class Thumper : MonoBehaviour
         else
         {
             SetNewPatrolPoint();
-
         }
-
     }
 
     void CheckSight(float degree, float maxDistance)
@@ -224,9 +251,10 @@ public class Thumper : MonoBehaviour
                 {
                     target = players[i].transform;
 
-                    //상태를 trace 상태로 전환한다.
+                    //scream 상태로 전환한다.
                     thpstate = ThpState.Scream;
                     print("MyState : Idle/Patrol >>>> Scream");
+                    animator.SetTrigger("PlayerIsHere");
                 }
             }
         }
@@ -243,6 +271,9 @@ public class Thumper : MonoBehaviour
         idletime = UnityEngine.Random.Range(1.0f, 3.0f); // 새로운 아이들 시간 설정
         print("Debug_Idletime : " + idletime);
         print("ThpState : Patrol >>>> Idle");
+        animator.SetBool("IsPatrol", false);
+        smith.isStopped = true;
+        smith.ResetPath();
     }
 
 
@@ -251,13 +282,17 @@ public class Thumper : MonoBehaviour
     {
         if (!isalreadyScream)
         {
+            //nav 멈추고
+            smith.isStopped = true;
+            smith.ResetPath();
+            //오디오
+            audioSource.clip = roar;
             audioSource.Play(); //소리 꿕 지르면서
             Invoke("ScreamWhatnext", 1.5f); //1초 시간주기
             isalreadyScream = true;
         }
         Vector3 dir = target.position - transform.position;
         dir.y = 0; //모델링 시선을 수평으로 만들기
-
         SmoothRotateToYou(dir);
     }
 
@@ -268,6 +303,7 @@ public class Thumper : MonoBehaviour
 
         thpstate = ThpState.Trace;
         print("MyState : Scream >>>> Trace");
+        animator.SetTrigger("StartRunning");
 
         isalreadyScream = false;
     }
@@ -294,9 +330,17 @@ public class Thumper : MonoBehaviour
             searchingTime -= Time.deltaTime;
             if (searchingTime < 0)
             {
+                //nav 멈추고
+                smith.isStopped = true;
+                smith.ResetPath();
+                //속도 복구하고...
+                smith.speed = patrolSpd;
+                smith.acceleration = 3.0f;
+
                 //상태 Idle로 전환.
                 thpstate = ThpState.Idle;
                 print("MyState : Trace >>> Idle");
+                animator.SetTrigger("LostPlayer");
                 searchingTime = setsearchingTime;
                 return;
             }
@@ -308,29 +352,26 @@ public class Thumper : MonoBehaviour
 
         Vector3 dir = target.position - transform.position;
         dir.y = 0;
-        cc.Move(dir.normalized * traceSpd * Time.deltaTime);
+        //cc.Move(dir.normalized * traceSpd * Time.deltaTime);
+        //SmoothRotateToYou(dir);
 
-        SmoothRotateToYou(dir);
-
-        ////장애물 감지해서 돌기
-        //if (Physics.Raycast(transform.position, dir, out RaycastHit hit, 2.0f))
-        //{
-        //    if (hit.collider.CompareTag("Obstacle")) // 장애물 태그로 감지
-        //    {
-        //        Vector3 avoidance = Vector3.Cross(dir, Vector3.up).normalized;
-        //        dir = Vector3.Lerp(dir, dir + avoidance, 5f); // 기존 방향과 회피 방향을 보간하여 새로운 방향 생성
-        //        dir = dir.normalized;
-        //        cc.Move(dir * patrolSpd * Time.deltaTime);
-        //    }
-        //}
-
+        //추격 시작...
+        smith.SetDestination(target.position);
+        smith.speed = traceSpd;
+        smith.acceleration = 35.0f; //가속도 개빠르게
 
         if (dir.magnitude < attackRange)
         {
             currentTime = 0;
             searchingTime = setsearchingTime;
+            //멈추고
+            smith.isStopped = true;
+            smith.ResetPath();
+
+            //공격해!
             thpstate = ThpState.Attack;
             print("MyState : Trace >>> Attack");
+            animator.SetTrigger("Attack");
         }
 
     }
@@ -367,11 +408,10 @@ public class Thumper : MonoBehaviour
 
     private void Attack()
     {
-        GameManager_Proto.gm.AnemHit();
-        GameManager_Proto.gm.PlayerOnDamaged();
         //공격 애니메이션
-        //공격 사운드
-        //공격 영역 콜라이더 inable (닿으면 한 번만 HP가 줄어들도록)
+        audioSource.clip = attackSound;
+        audioSource.Play();
+     
         //어택딜레이로 넘어가기
         thpstate = ThpState.AttackDelay;
         print("MyState : Attack >>> AttackDelay");
@@ -383,9 +423,25 @@ public class Thumper : MonoBehaviour
         searchingTime -= Time.deltaTime;
         if (attackDelaytime < currentTime)
         {
-            thpstate = ThpState.Trace;
-            print("MyState : AttackDelay >>> Trace");
-            return;
+            //거리 한번 재야겠다...
+            Vector3 dir = target.position - transform.position;
+            dir.y = 0;
+
+            if (dir.magnitude < attackRange) //거리가 공격범위면 때려
+            {
+                currentTime = 0;
+                searchingTime = setsearchingTime;
+                thpstate = ThpState.Attack;
+                print("MyState : Trace >>> Attack");
+                animator.SetTrigger("Attack");
+            }
+            else // 아니면 추격해
+            {
+                thpstate = ThpState.Trace;
+                print("MyState : AttackDelay >>> Trace");
+                animator.SetTrigger("StartRunning");
+                return;
+            }
         }
         else
         {
@@ -399,17 +455,42 @@ public class Thumper : MonoBehaviour
         //거리 재서 Trace냐 Rush냐
     }
 
-    private void Damaged()
+    public void Damaged()//GameMAnager에서 실행하기
     {
+        thpstate = ThpState.Damaged;
+        print("MyState : >>>Damaged");
         //처맞는 애니메이션
+        animator.SetTrigger("Ishitted");
         //처맞는 소리
-        //HP감소
+        audioSource.clip = hitSound;
+        audioSource.Play();
+
+        //target 넣어주기
+        target = null;
+        GameObject targetobj = GameObject.Find("EnemyTarget");
+        target = targetobj.transform;
+
+        //고개 돌리기
+        Vector3 dir = target.position - transform.position;
+        dir.y = 0;
+        //cc.Move(dir.normalized * traceSpd * Time.deltaTime);
+        SmoothRotateToYou(dir);
+
+        //처맞고 trace 시작
+        Invoke("ScreamWhatnext", 0.7f);
+
     }
 
-    private void Dead()
+    public void Dead() //GameMAnager에서 실행하기
     {
+        thpstate = ThpState.Dead;
+        animator.SetTrigger("IsDead");
+        audioSource.clip = dieSound;
+        audioSource.Play();
         //쥬금
         //대부분의 기능 Disable
+        cc.enabled = false;
+        smith.enabled = false;
     }
 
 
@@ -418,7 +499,7 @@ public class Thumper : MonoBehaviour
     {
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation = Quaternion.LookRotation(dir.normalized);
-        transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, rotSpd * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, 3f * Time.deltaTime);
     }
 
 
@@ -426,26 +507,32 @@ public class Thumper : MonoBehaviour
     {
         #region 시야각
         //시야각
-        Gizmos.color = Color.red;
-        float rightDegree = 90 - sightRot;
-        float leftDegree = 90 + sightRot;
+        if (drawsight)
+        {
+            Gizmos.color = Color.red;
+            float rightDegree = 90 - sightRot;
+            float leftDegree = 90 + sightRot;
 
-        Vector3 rightpos = (transform.right * Mathf.Cos(rightDegree * Mathf.Deg2Rad) +
-                           transform.forward * MathF.Sin(rightDegree * Mathf.Deg2Rad)) * sightDis
-                          + transform.position;
+            Vector3 rightpos = (transform.right * Mathf.Cos(rightDegree * Mathf.Deg2Rad) +
+                               transform.forward * MathF.Sin(rightDegree * Mathf.Deg2Rad)) * sightDis
+                              + transform.position;
 
 
-        Vector3 leftpos = (transform.right * Mathf.Cos(leftDegree * Mathf.Deg2Rad) +
-                          transform.forward * MathF.Sin(leftDegree * Mathf.Deg2Rad)) * sightDis
-                          + transform.position;
+            Vector3 leftpos = (transform.right * Mathf.Cos(leftDegree * Mathf.Deg2Rad) +
+                              transform.forward * MathF.Sin(leftDegree * Mathf.Deg2Rad)) * sightDis
+                              + transform.position;
 
-        Gizmos.DrawLine(transform.position, rightpos);
-        Gizmos.DrawLine(transform.position, leftpos);
+            Gizmos.DrawLine(transform.position, rightpos);
+            Gizmos.DrawLine(transform.position, leftpos);
+        }
         #endregion
 
         #region 패트롤 거리
-        Gizmos.color = Color.white;
-        Gizmos.DrawWireSphere(transform.position, patrolRadius);
+        if (drawrange)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(transform.position, patrolRadius);
+        }
         #endregion
 
     }

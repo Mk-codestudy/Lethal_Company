@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class OpenableDoor : MonoBehaviour
@@ -36,6 +37,12 @@ public class OpenableDoor : MonoBehaviour
     [Header("UI 캔버스 제어")]
     public GameObject canvas;
 
+    [Header("문 사운드")]
+    public AudioClip[] doorsound;
+    AudioSource audioSource;
+
+    public NavMeshObstacle obs;
+
     void Start()
     {
         if (player == null)
@@ -43,6 +50,8 @@ public class OpenableDoor : MonoBehaviour
             Debug.LogWarning("Door :: Player 게임오브젝트를 변수에 할당하지 않음!");
         }
         player = GameObject.FindGameObjectWithTag("Player").transform; //캐싱~
+        audioSource = gameObject.AddComponent<AudioSource>();
+
 
         // Slider를 초기화
         if (progressSlider != null)
@@ -51,7 +60,6 @@ public class OpenableDoor : MonoBehaviour
             progressSlider.value = 0f;
             progressSlider.gameObject.SetActive(false); // 초기에는 비활성화
         }
-
     }
 
     void Update()
@@ -83,16 +91,22 @@ public class OpenableDoor : MonoBehaviour
                 {
                     OpenTheDoor();
                     //사운드 재생
+                    audioSource.clip = doorsound[0];
+                    audioSource.Play();
                     currentHoldTime = 0;
                     SliderReset();
+                    obs.enabled = true;
 
                 }
                 else if (isDoorOpen)
                 {
                     CloseTheDoor();
                     //사운드 재생
+                    audioSource.clip = doorsound[1];
+                    audioSource.Play();
                     currentHoldTime = 0;
                     SliderReset();
+                    obs.enabled = false;
                 }
 
             }

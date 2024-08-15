@@ -37,6 +37,9 @@ public class Lever : MonoBehaviour
 
     [Header("레버를 땅기면 n번 씬으로 넘어가기")]
     public int sceneNumber;
+    public AudioClip[] audioClips;
+
+    AudioSource audioSource;
 
     void Start()
     {
@@ -53,7 +56,8 @@ public class Lever : MonoBehaviour
             progressSlider.gameObject.SetActive(false); // 초기에는 비활성화
         }
         holdText.SetActive(false);
-
+        
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -84,10 +88,13 @@ public class Lever : MonoBehaviour
                 {
                     //함선이 흔들리며 뭔가가 일어난다.
                     //함선 흔들어제끼기
-                    camshake.letsShake = true;
-
+                    audioSource.clip = audioClips[0];
+                    audioSource.Play();
+                    //인보크로 다음 사운드
+                    Invoke("TurnonSound", 0.5f);
                     //인보크로 1초 뒤에 씬넘어가기
-                    Invoke("LoadScene", 1.5f);
+                    Invoke("LoadScene", 5f);
+                    currentHoldTime = 0f;
                 }
             }
             else
@@ -130,6 +137,14 @@ public class Lever : MonoBehaviour
 
         SceneManager.LoadScene(sceneNumber); //이게 진짜 로드씬
     }
+
+    void TurnonSound()
+    {
+        camshake.letsShake = true;
+        audioSource.clip = audioClips[1];
+        audioSource.Play();
+    }
+
 
 
     #region 기즈모로 거리 그리기

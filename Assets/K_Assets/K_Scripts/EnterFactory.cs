@@ -43,7 +43,6 @@ public class EnterFactory : MonoBehaviour
 
     [Header("UI Äµ¹ö½º Á¦¾î")]
     public GameObject canvas;
-    
 
 
     void Start()
@@ -63,7 +62,6 @@ public class EnterFactory : MonoBehaviour
         }
 
         //mapManager.LoadMapState();
-
 
     }
 

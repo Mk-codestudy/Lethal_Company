@@ -37,22 +37,33 @@ public class ShipDoor : MonoBehaviour
     [Header("문 열기 UI")]
     public GameObject openUI;
 
+    [Header("문 사운드")]
+    public AudioClip[] audioClip;
+    public AudioSource audioSource;
+
+    //사운드 조절하기
+
+    public bool openSoundOnce;
+    public bool closeSoundOnce = true;
+
+
     void Start()
     {
         openUI.SetActive(false);
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
         if (isDoorOpen)
         {
-            //Invoke("Open", 0);//왜일케했징?
-            Open();
+            Invoke("Open", 0);
+            //Open();
         }
         else
         {
-            //Invoke("Close", 0);
-            Close();
+            Invoke("Close", 0);
+            
         }
 
 
@@ -109,6 +120,13 @@ public class ShipDoor : MonoBehaviour
         rightDoor.transform.position = Vector3.Lerp(rightDoor.transform.position, rightClose.position, moneSpd * Time.deltaTime);
         leftDoor.GetComponentInParent<BoxCollider>().enabled = true;
         rightDoor.GetComponentInParent<BoxCollider>().enabled = true;
+        if (!closeSoundOnce)
+        {
+            audioSource.clip = audioClip[1];
+            audioSource.Play();
+            closeSoundOnce = true;
+            openSoundOnce = false;
+        }
     }
 
     void Open()
@@ -117,6 +135,14 @@ public class ShipDoor : MonoBehaviour
         rightDoor.transform.position = Vector3.Lerp(rightDoor.transform.position, rightOpen.position, moneSpd * Time.deltaTime);
         leftDoor.GetComponentInParent<BoxCollider>().enabled = false;
         rightDoor.GetComponentInParent<BoxCollider>().enabled = false;
+        if (!openSoundOnce)
+        {
+            audioSource.clip = audioClip[0];
+            audioSource.Play();
+            openSoundOnce = true;
+            closeSoundOnce = false;
+        }
+        
     }
 
     #region 기즈모로 거리 그리기
