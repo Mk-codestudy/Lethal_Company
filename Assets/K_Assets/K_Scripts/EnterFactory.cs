@@ -6,9 +6,6 @@ using UnityEngine.UI;
 
 public class EnterFactory : MonoBehaviour
 {
-    [Header("n번 씬으로 가기!")]
-    public int sceneNumber = 0;
-
     [Header("플레이어 게임오브젝트")]
     public Transform player;
 
@@ -26,15 +23,26 @@ public class EnterFactory : MonoBehaviour
     float currentHoldTime = 0;
 
 
+    //게이트 넘버
+    [Header("공장 맵 게이트는 true, 오펜스 게이트는 flase")]
+    public bool factoryGate = false;
+
+    [Header("맵 게임오브젝트 할당")]
+    public GameObject offense;
+    public GameObject factory;
+
+    //[Header("플레이어 포지션 할당")]
+    //public Transform offensepos;
+    //public Transform factorypos;
+
+
     //UI
     [Header("진척도 슬라이더 UI")]
     public Slider progressSlider; // 진척도를 표시할 Slider
+    public GameObject prograssUI; // UI 숨기고 표시 제어하기
 
     [Header("UI 캔버스 제어")]
     public GameObject canvas;
-
-    [Header("맵 상태 저장 관련")]
-    public MapManager mapManager;
 
 
     void Start()
@@ -55,7 +63,6 @@ public class EnterFactory : MonoBehaviour
 
         //mapManager.LoadMapState();
 
-
     }
 
     void Update()
@@ -65,7 +72,7 @@ public class EnterFactory : MonoBehaviour
 
         if (distanceToPlayer > interactionDistance)
         {
-            canvas.SetActive(false); //UI활성화
+            canvas.SetActive(false); //UI비활성화
             return;
         }
         else if (Input.GetKey(KeyCode.E)) //문 앞에서 e키를 꾹 누른 채 대기하면 문이 열림.
@@ -81,10 +88,9 @@ public class EnterFactory : MonoBehaviour
 
             if (currentHoldTime > doorHoldTime) //내가 정한 시간을 넘어가면!
             {
-                //저장하기
-                //mapManager.SaveMapState(); //안되겟다.
-                //씬 넘어가기
-                SceneManager.LoadScene(sceneNumber);
+                GotoAnotherRoom(factoryGate);
+                //넘어가기
+                print("공간 넘어가기!");
             }
         }
         else
@@ -105,6 +111,27 @@ public class EnterFactory : MonoBehaviour
         else
         {
             print("슬라이더가 안 들어옴!");
+        }
+    }
+
+
+    void GotoAnotherRoom(bool factoryGate) //공간 넘어가는 함수
+    {
+        if (!factoryGate) //오펜스 => 공장
+        {
+            //공장 맵 활성화
+            factory.SetActive(true);
+            
+            //오펜스 비활성화
+            offense.SetActive(false);
+        }
+        else //공장 => 오펜스
+        {
+            //공장 맵 활성화
+            offense.SetActive(true);
+            
+            //오펜스 비활성화
+            factory.SetActive(false);
         }
     }
 
