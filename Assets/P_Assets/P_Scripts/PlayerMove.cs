@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using UnityEditorInternal.Profiling.Memory.Experimental;
+
 //using UnityEditor.Experimental.GraphView;
 //using UnityEditorInternal;
 using UnityEngine;
@@ -76,10 +78,14 @@ public class PlayerMove : MonoBehaviour
     public Transform RightHand; // 주을 아이템이 있을 위치 , Player의 자식오브젝트인  right hand를 드래그해서 넣는다.
     public GameObject selectedItem; // 현재 선택한 아이템
     public bool holdItem; // 현재 들고 있는ㄴ지 확인
+    public GameObject newItem;  // 스위치한 아이템
     private int selectedIndex; // 선택된 아이템의 인덱스
     public Inventory inventory; // 인벤토리 스크립트 참조
 
-    public int num; // 아이템 슬롯의 번호 ( 1~4 )
+
+
+    public Item_Flashlight flashlightItem; // 플래쉬 라이트 변수
+   
 
     CharacterController cc;
 
@@ -164,10 +170,7 @@ public class PlayerMove : MonoBehaviour
                 break;
             case PlayerState.Attack:
                 Attack();
-                break;
-            case PlayerState.Handlight:
-                Handlight();
-                break;
+                break;            
             case PlayerState.OnDamaged:
                 OnDamaged();
                 break;
@@ -197,7 +200,7 @@ public class PlayerMove : MonoBehaviour
         RegenStamina(); // 스태미너 재생(15 고정값)
         UpdateUI(); // ui를 실시간 업데이트
         Scan();
-
+       
 
 
 
@@ -222,14 +225,13 @@ public class PlayerMove : MonoBehaviour
 
 
 
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
 
-
-
-
-
-
-
-
+            Debug.Log("손전등을 킵니다");
+            Handlight();
+        }
+        
 
 
 
@@ -261,6 +263,7 @@ public class PlayerMove : MonoBehaviour
             currentState = PlayerState.Walk;
         }
 
+       
     }
 
 
@@ -425,12 +428,38 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    void Handlight() // 핸드라이트를 들고 있을때만
+    public void Handlight() // 핸드라이트를 들고 있을때만
     {
+        flashlightItem = null;
 
+        if (selectedItem != null && selectedItem.name.Contains("Flashlight"))
+        {
+            flashlightItem = selectedItem.GetComponent<Item_Flashlight>();
+        }
+        else if (newItem != null && newItem.name.Contains("Flashlight"))
+        {
+            flashlightItem = newItem.GetComponent<Item_Flashlight>();
+        }
+
+        if (flashlightItem != null)
+        {
+            if ((selectedItem.name.Contains("Flashlight")) || (newItem != null && newItem.name.Contains("Flashlight")))
+            {
+
+                flashlightItem.LightOnOff();
+
+            }
+            else
+            {
+                Debug.Log("tlqkfwls");
+            }
+        }
+
+        
     }
 
-    void OnDamaged()
+
+        void OnDamaged()
     {
 
     }
@@ -687,19 +716,7 @@ public class PlayerMove : MonoBehaviour
 
 
 
-    // 아이템 줍기 메커니즘 1
-
-
-    // 플레이어가 item tag인 game object와 충돌하고
-
-    // 플레이어가 e 를 누르면 
-
-    // 아이템은 사라지고(Destroy)
-
-    // 아이템은 플레이어 transform의 자식 위치에 생성된다.
-
-    // 아이템을 player의 자식의 자식 오브젝트로 만든다(가지고 다닐수있게)
-
+    
 
     public void PickupItem() //아이템 줍기  
     {
@@ -803,21 +820,26 @@ public class PlayerMove : MonoBehaviour
        
         GameObject newItem = inventory.SelectItem(index); // 배열 index 번에 있는 데이터를 newItem 변수에 넣는다.
 
-        // 만약, 배열에 아이템이 있고 손에 아무것도 없을떄
+        // 만약, 배열에 아이템이 있고 손에 뭐가 있을때
         if (newItem != null)
         {
             if (holdItem)
 
             {
+                // 이 함수를 실행
                 RemoveHandItem();
 
             }
 
+
+            // 만약 배열에 아이템이 있을경우
             Debug.Log("홀드아이템이 생겻습니다.");
 
             newItem.transform.SetParent(RightHand); // Righthand 를 부모로하고
-            newItem.transform.position = Vector3.zero;
-            newItem.transform.rotation = Quaternion.identity;
+            newItem.transform.position = RightHand.transform.position;
+            //newItem.transform.position = Vector3.zero;
+            newItem.transform.forward = RightHand.transform.forward;
+            //newItem.transform.rotation = Quaternion.identity;
 
 
             // 공중에서 생성된 아이템을 떨어뜨리기 위해 item 에 rigidbody를 추가
@@ -844,10 +866,6 @@ public class PlayerMove : MonoBehaviour
     }
     
 
-
-
-
-
     public void RemoveHandItem() // 현재 손에 든 물건을 비활성화하는 함수
     {    // 손에 물건이 있고 번호를 입력했을때 
         if (selectedItem != null)
@@ -867,204 +885,18 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    //public void EquipItem(int num)  /// 수정필요
-    //{
-    //    GameObject equipItem = inventory.GetItem(num); // getitem의 매개변수와 equip 아이템의 매개변수를 맞춘다
 
-    //    if (equipItem != null) // 호출한 아이템이 null이 아닌 경우
-    //    {
-    //        if (holdItem != null) // 현재 손에 아이템이 있을 경우
-    //        {
-    //            // 현재 손에 든 아이템을 비활성화하고 부모를 제거
-    //            holdItem.SetActive(false);
-    //            holdItem.transform.SetParent(null); // 손에서 부모 제거
-    //        }
 
-    //        // 새 아이템을 손에 장착
-    //        holdItem = equipItem;
-    //        holdItem.transform.position = RightHand.position;
-    //        holdItem.transform.rotation = RightHand.rotation;
-    //        holdItem.SetActive(true);
-    //        holdItem.transform.SetParent(RightHand); // 오른손을 부모로 설정
-    //    }
-    //    else
-    //    {
-    //        // 호출한 아이템이 null일 경우
-    //        if (holdItem != null)
-    //        {
-    //            // 현재 손에 든 아이템이 있으면 이를 비활성화하고 부모를 제거
-    //            holdItem.SetActive(false);
-    //            holdItem.transform.SetParent(null); // 손에서 부모 제거
-    //            holdItem = null; // 손에 든 아이템 초기화
-    //        }
-    //    }
 
 
 
 
 
 
-    //if (equipitem != null) // 호출한 물건이 null이 아니고
-    //{
-    //    if (holdItem == null)
-    //    {
-    //        holdItem = equipitem; // 배열에서 호출한 아이템이 holditem 이다
+   
 
-    //        holdItem.SetActive(true);
-    //    }
-    //}
-    //else if (equipitem != null) // 호출한 물건이 null이 아니고
-    //{
-    //    if (holdItem != null) // 손에 무엇을 들고 있고 다른 번호를 눌러 배열에 있는 아이템을 호출했다면
-    //    {
-    //        holdItem.SetActive(false);// 현재 들고있는 아이템을 비활성화 시키고
 
-    //        holdItem = equipitem; // 배열에서 호출한 아이템이 holditem 이다
-    //    }
-    //}
-    //else if (equipitem == null)
-    //{
-    //    if (holdItem != null)
-    //    {
-    //        return;
-    //    }
-    //}
 
-
-
-
-
-
-
-
-        //    if (equipitem != null) // 배열에서 호출한 아이템이 null 이아니고
-        //{
-        //    if (holdItem != null) // 빈 손이 아니라면
-        //    {
-        //        inventory.AddItem(holdItem); // 현재 손에 들고있는 아이템을 배열에 담는다
-        //        holdItem.SetActive(false);
-        //        holdItem.transform.SetParent(null);  //holditem 부모를 제거
-        //    }
-
-        //    //그리고 배열에서 호출한 아이템을 손에 든다
-
-        //    holdItem = equipitem;
-        //    holdItem.transform.position = RightHand.position;
-        //    holdItem.transform.rotation = RightHand.rotation;
-        //    holdItem.SetActive(true);
-        //    holdItem.transform.SetParent(RightHand); // 오른손을 부모로 잡음
-        //}
-        //else
-        //{
-        //    if (holdItem != null) // 들고 있는 아이템이 있다면
-        //    {
-        //        inventory.AddItem(holdItem);
-        //        holdItem.SetActive(false);
-        //        holdItem.transform.SetParent(null); //holditem 부모를 제거
-        //        holdItem = null;
-        //    }
-        //}
-    
-
-
-
-
-
-        //if (Input.GetKeyDown(KeyCode.Alpha1)) // 1을 누르면
-        //    {
-        //        if(holdItem == null) // 만약, 손에 든 아이템이 없다면
-        //        {
-        //           holdItem = inventory.GetItem(0); // 0번에 있는 아이템을 가져온다. 어디로?
-        //            holdItem.transform.position = RightHand.transform.position; // 오른손의 위치로
-        //            holdItem.transform.rotation =  RightHand.transform.rotation;
-        //            holdItem.SetActive(true);
-
-        //        }
-        //        else if(holdItem != null) // 만약, 손에 item을 들고 있다면
-        //        {
-        //            inventory.AddItem(holdItem); // 현재, 들고 있는 물건을 다시 넣고
-        //            holdItem.SetActive(false);
-        //            holdItem = null;
-        //        }
-
-
-        //}
-
-
-    
-
-
-
-
-
-    // collideitem 으로 collide 충돌확인
-    // 현재 닿은 아이템을 currentitem 변수에 복사
-    // 만약, 닿은 collider의 tag 가 item 이면
-    // 미리 만들어둔 인벤토리 배열에 담는다.
-    // 주운 오브젝트는 월드에서 SetActive(false)
-
-
-// 각 배열에 번호를 할당 - player.update
-// 해당 번호를 누르면 
-// holditem 이라는 변수를 만들고 그 안에 담는다
-// holditem의 위치는 미리 만들어둔 오른손의 위치(Righthand Position)
-
-// 만약, 1번을 눌렀다가 2번을 누르면
-// hold item 을 빈칸을찾아(for i == null) 넣고
-// 2번 오브젝트를 꺼낸다.
-
-
-
-// trigger는 각 오브젝트에 만들어 두는게 낫다
-
-
-
-// 아이템을 줍는다
-// 4칸짜리 배열
-// 아이템을 주우면
-// 해당 아이템을 씬에서 비활성화 하고
-// 배열에 담는다
-
-// 배열에 0(1) 1(2) 2(3) 3(4) 번호를 할당하고
-// 번호를 누르면 해당 칸에 있는 아이템을
-// RIghthand position 으로 이동시키고
-// 활성화 한다.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 아이템 줍기 메커니즘 2 - 인벤토리에 저장, 별개의 Gameobject를 만들어서 Inventory로 사용한다.
-
-// holditem != null 이고
-// inventory[i] == null 이라면
-// inventory[i] 에 저장하고
-// holditem 을 Destroy 한다
-// holdItem == null 로 초기화 한다.
-
-
-
-
-
-
-
-
-
-
-//아이템 줍기
-//public void ItemPickUp()
-//{
 //    RaycastHit hit;
 
 //    Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward); // 레이의 발사위치는 메인 카메라
