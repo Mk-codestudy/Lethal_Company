@@ -256,11 +256,14 @@ public class PlayerMove : MonoBehaviour
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         if(Camera.main == null)
         {
             return;
         }
 
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
