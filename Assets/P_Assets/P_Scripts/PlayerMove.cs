@@ -102,8 +102,7 @@ public class PlayerMove : MonoBehaviour
         Walk,
         Run,
         Ladder, // 사다리에 타고(collider가 충돌됫을때) 있을때
-        Attack, // 은 삽을 들고있을때만
-        Handlight, // 손전등 들고있을때만
+        Attack, // 은 삽을 들고있을때만       
         OnDamaged,
         Dead,
         Cinematic,
@@ -188,7 +187,7 @@ public class PlayerMove : MonoBehaviour
             ClimbLadder(); // 사다리 타기
         }
 
-        //PickupItem(); // 아이템 줍기
+        PickupItem(); // 무거운 아이템 줍기
         DropItem(); // 아이템 버리기
         StoreItemInventory(); // 아이템 인벤토리에 추가하기
         //EquipItem(num);
@@ -419,11 +418,11 @@ public class PlayerMove : MonoBehaviour
     void Attack() //플레이어 공격은 오직 플레이어가 Shover를 가지고 있을때만
     {
 
-        if (selectedItem.CompareTag("Shover")) // 플레이어가 shover 태그의 게임 오브젝트를 들고있고
+        if (selectedItem.name.Contains("Shover")) // 플레이어가 shover 태그의 게임 오브젝트를 들고있고
         {
             if (Input.GetMouseButtonDown(0)) // 좌클릭을 했다면
             {
-
+                
             }
         }
     }
@@ -519,10 +518,8 @@ public class PlayerMove : MonoBehaviour
 
                     if (item != null)
                     {
-                        //print("" + item.itemName);
-                        //print("" + item.itemValue);
-
-                        // Item 컴포넌트의 name과 value를 출력합니다.
+                       
+                        // Item 컴포넌트의 name과 value를 출력한다.
                         Debug.Log("Item Name: " + item.itemName);
                         Debug.Log("Item Value: " + item.itemValue);
 
@@ -718,34 +715,58 @@ public class PlayerMove : MonoBehaviour
 
     
 
-    public void PickupItem() //아이템 줍기  
+    //public void PickupItem() //아이템 줍기  
+    //{
+    //    // // E를 누르고 현재 아이템에 닿아있다면 
+    //    if (Input.GetKeyDown(KeyCode.E) && (collideItem))
+    //    {
+    //        if (currentItem != null) // 그리고 주울 아이템이 null 값이 아니라면
+    //        {
+
+    //            if (holdItem == false) // 현재 들고있는 아이템이 null 값이라면
+    //            {
+    //                selectedItem = Instantiate(currentItem, RightHand.position, RightHand.rotation); //  Player-RightHand.Position에 currentItem 을 생성한다. // 현재 아이템을 홀드아이템 변수로 넣는다.
+    //                selectedItem.transform.SetParent(RightHand); // player의 righthand를 주운 오브젝트의 부모로 한다.
+
+
+    //                Rigidbody rb = selectedItem.GetComponent<Rigidbody>(); // item 의 rigidbody 컴포넌트를 가져와서
+    //                if (rb != null)
+    //                {
+    //                    rb.isKinematic = true; // 떨어지지 않게 iskineitc 을 체크
+    //                }
+
+    //                Destroy(currentItem); // 씬에서 지운다
+    //                currentItem = null; // currentItem 초기화
+    //                Debug.Log("아이템을 주웠습니다.");
+
+    //            }
+    //        }
+    //    }
+
+    //}
+
+    public void PickupItem() // 이건 양손 아이템을 들때만
     {
-        // // E를 누르고 현재 아이템에 닿아있다면 
-        if (Input.GetKeyDown(KeyCode.E) && (collideItem))
+        if(Input.GetKeyDown(KeyCode.E) && (collideItem))
         {
-            if (currentItem != null) // 그리고 주울 아이템이 null 값이 아니라면
+            if (currentItem.name.Contains("Casher")) 
             {
+                currentItem.transform.SetParent(RightHand);
+                currentItem.transform.position = RightHand.transform.position;
+                currentItem.transform.rotation = RightHand.transform.rotation;
 
-                if (holdItem == false) // 현재 들고있는 아이템이 null 값이라면
+                 Rigidbody rb = selectedItem.GetComponent<Rigidbody>(); // item 의 rigidbody 컴포넌트를 가져와서
+                if (rb != null)
                 {
-                    selectedItem = Instantiate(currentItem, RightHand.position, RightHand.rotation); //  Player-RightHand.Position에 currentItem 을 생성한다. // 현재 아이템을 홀드아이템 변수로 넣는다.
-                    selectedItem.transform.SetParent(RightHand); // player의 righthand를 주운 오브젝트의 부모로 한다.
-
-
-                    Rigidbody rb = selectedItem.GetComponent<Rigidbody>(); // item 의 rigidbody 컴포넌트를 가져와서
-                    if (rb != null)
-                    {
-                        rb.isKinematic = true; // 떨어지지 않게 iskineitc 을 체크
-                    }
-
-                    Destroy(currentItem); // 씬에서 지운다
-                    currentItem = null; // currentItem 초기화
-                    Debug.Log("아이템을 주웠습니다.");
-
+                    rb.isKinematic = true; // 떨어지지 않게 iskineitc 을 체크
                 }
+
+                // 이 양손 오브젝트를 들면 다른 아이템과는 상호작용하지 못하도록
+               
+                holdItem = true;
+                
             }
         }
-
     }
 
     public void DropItem() // 아이템 버리기
@@ -836,11 +857,28 @@ public class PlayerMove : MonoBehaviour
             Debug.Log("홀드아이템이 생겻습니다.");
 
             newItem.transform.SetParent(RightHand); // Righthand 를 부모로하고
-            newItem.transform.position = RightHand.transform.position;
-            //newItem.transform.position = Vector3.zero;
+            newItem.transform.position = RightHand.transform.position;           
             newItem.transform.forward = RightHand.transform.forward;
+            //newItem.transform.position = Vector3.zero;
             //newItem.transform.rotation = Quaternion.identity;
 
+
+            if (newItem != null && newItem.name.Contains("Shover"))
+            {
+                // 삽의 회전값
+                Vector3 shoverVector = new Vector3(3.047f, -240.752f, 1.705f);
+
+                Quaternion shoverRotation = Quaternion.Euler(shoverVector);
+         
+                newItem.transform.position = RightHand.transform.position;
+                newItem.transform.rotation = shoverRotation;
+            }
+            else
+            {
+                newItem.transform.forward = RightHand.transform.forward;
+            }
+                       
+            
 
             // 공중에서 생성된 아이템을 떨어뜨리기 위해 item 에 rigidbody를 추가
             Rigidbody rb = newItem.GetComponent<Rigidbody>();
@@ -862,6 +900,7 @@ public class PlayerMove : MonoBehaviour
         else
         {
             Debug.Log("선택된 아이템이 없습니다.");
+            RemoveHandItem();
         }
     }
     

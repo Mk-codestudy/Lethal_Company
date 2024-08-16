@@ -34,27 +34,35 @@ public class Item : MonoBehaviour // 이 아이템 스크립트를 다른 아이템 스크립트에
         }
     }
 
-    public virtual void Update() // Bilboard 구현, Text ui가 캐릭터 카메라를 바라보게
+    public virtual void Update() // 
     {
-
-        itemName_text.text = itemName; // 아이템 이름표시
-        itemName_value.text = itemValue.ToString(); // 가치표시
-
-
-        if (itemName_text != null && itemName_value != null)
+        if(itemName_text != null)
         {
-            Vector3 dir1 = itemName_text.transform.position - Camera.main.transform.position;  // 메인카메라(player) 를 바라보는 방향 벡터
-            Vector3 dir2 = itemName_value.transform.position - Camera.main.transform.position; // 메인카메라(player) 를 바라보는 방향 벡터
-
-            Quaternion lookRotation1 = Quaternion.LookRotation(dir1); // 카메라를 보는 방향으로 바라보는 rotation
-            Quaternion lookRotation2 = Quaternion.LookRotation(dir2); // 카메라를 보는 방향으로 바라보는 rotation
-
-            itemName_text.transform.rotation = lookRotation1;
-            itemName_value.transform.rotation = lookRotation2;
-
-
-
+            itemName_text.text = itemName; // 아이템 이름표시
         }
+        if(itemName_value != null)
+        {
+            itemName_value.text = itemValue.ToString(); // 가치표시
+        }
+       
+        
+
+
+
+        //if (itemName_text != null && itemName_value != null)
+        //{
+        //    Vector3 dir1 = itemName_text.transform.position - Camera.main.transform.position;  // 메인카메라(player) 를 바라보는 방향 벡터
+        //    Vector3 dir2 = itemName_value.transform.position - Camera.main.transform.position; // 메인카메라(player) 를 바라보는 방향 벡터
+
+        //    Quaternion lookRotation1 = Quaternion.LookRotation(dir1); // 카메라를 보는 방향으로 바라보는 rotation
+        //    Quaternion lookRotation2 = Quaternion.LookRotation(dir2); // 카메라를 보는 방향으로 바라보는 rotation
+
+        //    itemName_text.transform.rotation = lookRotation1;
+        //    itemName_value.transform.rotation = lookRotation2;
+
+
+
+        //}
     }
 
 
