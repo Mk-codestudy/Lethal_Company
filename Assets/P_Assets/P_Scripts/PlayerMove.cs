@@ -4,11 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using UnityEditorInternal.Profiling.Memory.Experimental;
+
 //using UnityEditor.Experimental.GraphView;
 //using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static Turret;
 //using UnityEngine.UIElements;
 
 
@@ -18,7 +21,7 @@ using UnityEngine.UI;
 public class PlayerMove : MonoBehaviour
 {
 
-   
+    public Animator animator; // 애니메이터
 
 
     [Header("플레이어 이동 관련 변수")]
@@ -48,18 +51,19 @@ public class PlayerMove : MonoBehaviour
     float yPos; // 
     public float gravityVelocity = 5f; // 낙하속도
 
-    
+
     float rotX; // x축 마우스 회전 속도값을 담을 변수
     float rotY; // 
 
     bool isMoving;
-    bool isRunning;
+    //bool isRunning;
     bool isGround;
     //bool isCrouch = false; // 앉은 상태 x
     bool isIdle;
-    bool isOnLadder; // 사다리에 닿았는지 아닌지 E를 눌러서 상호작용하기 위해 추가함
-    bool isLadder = false; // 사다리 상태로 바꾼다
+    //bool isOnLadder; // 사다리에 닿았는지 아닌지 E를 눌러서 상호작용하기 위해 추가함
+    //bool isLadder = false; // 사다리 상태로 바꾼다
 
+    bool Climb = false; // 사다리에 닿았는지 아닌지
 
     [Header("플레이어 레이캐스트 변수")]
     public float rayDistance = 5f; // 레이캐스트 레이 최대   길이
@@ -67,49 +71,66 @@ public class PlayerMove : MonoBehaviour
 
 
 
-
     //아이템 줍기 상호작용
-
-
-
+    [Header("아이템 줍기 변수")]
     private bool collideItem = false; // 아이템 충돌체크
     private GameObject currentItem; // 현재 충돌 중인 아이템
     public Transform RightHand; // 주을 아이템이 있을 위치 , Player의 자식오브젝트인  right hand를 드래그해서 넣는다.
-    private GameObject holdItem; // 현재 들고 있는 아이템을 표시
-
+    public GameObject selectedItem; // 현재 선택한 아이템
+    public bool holdItem; // 현재 들고 있는ㄴ지 확인
+    public GameObject newItem;  // 스위치한 아이템
+    private int selectedIndex; // 선택된 아이템의 인덱스
     public Inventory inventory; // 인벤토리 스크립트 참조
 
 
 
-    CharacterController cc;
-
+    public Item_Flashlight flashlightItem; // 플래쉬 라이트 변수
    
 
-    //public Animator animator;
+    CharacterController cc;
+
 
     public PlayerState currentState; // 플레이어가 시작하는 처음 상태
+
     private object playerScan;
+
+
 
     public enum PlayerState // 플레이어의 유한 상태머신
     {
-        Idle,
-        Attack,
+        Normal,
+        Walk,
+        Run,
+        Ladder, // 사다리에 타고(collider가 충돌됫을때) 있을때
+        Attack, // 은 삽을 들고있을때만       
         OnDamaged,
         Dead,
-        Scan
+        Cinematic,
+        // 점프, 스캔은 공통요소
     }
+
+
+
+
 
 
 
     void Start()
     {
+
+
         //Cursor.lockState = CursorLockMode.Confined; // 커서 가두기
         Cursor.lockState = CursorLockMode.Locked; // 커서 가두기
         Cursor.visible = false;
 
+        currentState = PlayerState.Normal; // 시작 상태는 normal
+
+        animator = GetComponent<Animator>();  // animator controller 가 들어가 있는 플레이어 모델링을 이곳에 집어 넣는다.
+
+
         cc = GetComponent<CharacterController>(); // cc 컴포넌트
 
-        //animator = GetComponent<Animator>();  // animator controller 가 들어가 있는 플레이어 모델링을 이곳에 집어 넣는다.
+
 
         gravityPower = Physics.gravity;  // 중력 초기화 
 
@@ -125,245 +146,189 @@ public class PlayerMove : MonoBehaviour
 
     }
 
+
+
     void Update()
     {
 
-        PickupItem(); // 아이템 줍기
-        DropItem(); // 아이템 버리기
-        Rotate();
-        RegenStamina(5);
-
-
-        if ((isOnLadder) && Input.GetKeyDown(KeyCode.E))  // 사다리와 닿아있고 e를 눌렀을때
-        {
-            isLadder = !isLadder; // isladder 가 true 가 된다.
-
-            if (isLadder) // isLadder 상태에서는
-            {
-                gravityPower = Physics.gravity; // 중력을 초기화한다.
-                
-            }
-
-        }
-        if (isLadder)
-        {
-            Laddermove();
-        }
-        else
-        {
-            Move();
-        }
-
-
-        UpdateUI();
-
         switch (currentState)
         {
-            case PlayerState.Idle:
+            case PlayerState.Normal:
+                Normal();
+                break;
+            case PlayerState.Walk:
+                Walk();
+                Jump();
+                break;
+            case PlayerState.Run:
+                Run();
+                Jump();
+                break;
+            case PlayerState.Ladder:
+                Ladder();
                 break;
             case PlayerState.Attack:
-                PlayerAttak();
-                break;
+                Attack();
+                break;            
             case PlayerState.OnDamaged:
-                PlayerOnDamaged();
+                OnDamaged();
                 break;
             case PlayerState.Dead:
-                PlayerDead();
+                Dead();
                 break;
-            case PlayerState.Scan:
-                PlayerScan();
+            case PlayerState.Cinematic:
+                Cinematic();
                 break;
-            default:
-                break;
+
         }
 
-
-    }
-    #region BoxCast는 닿은 첫번째 오브젝트만 감지하기에 OverlapBox를 쓰기로 함
-    //private void PlayerScan() // 우클릭하면 캐릭터 전방으로 스캔
-    //{
-    //    if(Input.GetMouseButtonDown(1)) // 우클릭을 하면
-    //    {
-    //        RaycastHit hitInfo; // 충돌체의 정보를 담을 변수
-    //        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward); // 카메라의 위치에서 카메라의 foward방향으로
-
-    //        bool isHit = Physics.BoxCast(ray.origin, boxSize / 2, ray.direction, out hitInfo, transform.rotation, rayDistance, 1 << 6);
-
-    //        if(isHit) // 박스 레이에 닿았다면
-    //        {               
-    //           Debug.Log("박스캐스트에 닿았습니다. " + hitInfo.collider.name);
-
-    //        }
-
-
-
-    //    }
-    //}
-    #endregion
-
-
-    // OverlapBox 를 사용한 다중 감지
-    private void PlayerScan() // 우클릭하면 캐릭터 전방으로 스캔 
-    {
-        if(Input.GetMouseButtonDown(1))
+        if (Climb)
         {
-            Vector3 boxCenter = (Camera.main.transform.position + Camera.main.transform.forward); // 메인 카메라의 정면방향으로 box를 그린다.
-            Collider[] hitColliders = Physics.OverlapBox(boxCenter, boxSize / 2, Quaternion.identity, 1 << 6); // 감지한 콜라이더를 담을 배열을 만든다.
-
-
-
-            if(hitColliders.Length > 0) // 만약, 감지된 콜라이더의 개수가 0보다 많다면
-            {
-                for(int i = 0; i < hitColliders.Length; i++) // 배열의 인덱스를 사용해 출력한다
-                {
-                    Collider collider = hitColliders[i]; // i 번째의 콜라이더를 가져오고
-                    Item item = collider.GetComponent<Item>(); // 그 콜라이더 안에 잇는 item 컴포넌트를 가져온다
-                    
-                    if(item != null)
-                    {
-                        //print("" + item.itemName);
-                        //print("" + item.itemValue);
-
-                        // Item 컴포넌트의 name과 value를 출력합니다.
-                        Debug.Log("Item Name: " + item.itemName);
-                        Debug.Log("Item Value: " + item.itemValue);
-
-                        item.ShowItemInfo(); // UI 텍스트를 활성화하여 정보를 표시합니다.
-
-
-
-                    }
-                    else
-                    {
-                        Debug.Log("아무 오브젝트도 찾지 못했습니다." + collider.name);
-                    }                    
-                }
-            }
-            else
-            {
-                Debug.Log("아무것도 감지하지 못했습니다.");
-            }
-
-
+            ClimbLadder(); // 사다리 타기
         }
-    }
 
-    private void OnDrawGizmos() // 씬 뷰에서 Box Cast를 그려서확인한다.
-    {
-        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);  // 빨간줄은 레이
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(ray.origin, ray.direction * rayDistance);
+        PickupItem(); // 무거운 아이템 줍기
+        DropItem(); // 아이템 버리기
+        StoreItemInventory(); // 아이템 인벤토리에 추가하기
+        //EquipItem(num);
 
-        // 빨간줄의 끝에 BoxCast의 박스를 그립니다.
-        Vector3 halfExtents = boxSize / 2; // 박스길이의 반
-        Vector3 castEnd = ray.origin + ray.direction * rayDistance; // ray의 시작 위치에서 ray의 방향 * 최대거리
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(castEnd, boxSize);
+        Rotate(); // 마우스 방향으로 회전
 
-    }
+        Jump(); // 캐릭터 점프
 
-    private void PlayerAttak() //나중에 몬스터와 상호작용할 매개변수 넣기
-    {
-        //플레이어 공격은 오직 플레이어가 Shover를 가지고 있을때만
+        RegenStamina(); // 스태미너 재생(15 고정값)
+        UpdateUI(); // ui를 실시간 업데이트
+        Scan();
+       
+
+
+
+
+        if (Input.GetKeyDown(KeyCode.Alpha1)) // 1번을 누르면 
+        {
+            SwitchItem(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2)) // 2번을 누르면 
+        {
+            SwitchItem(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3)) // 3번을 누르면 
+        {
+            SwitchItem(2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4)) // 4번을 누르면 
+        {
+            SwitchItem(3);
+        }
+
+
+
+
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+
+            Debug.Log("손전등을 킵니다");
+            Handlight();
+        }
         
-        if(holdItem.CompareTag("Shover")) // 플레이어가 shover 태그의 게임 오브젝트를 들고있고
-        {
-            if(Input.GetMouseButtonDown(0)) // 좌클릭을 했다면
-            {
 
-            }
-        }
+
+
     }
 
-    private void PlayerDead()
+           
+
+
+
+
+    void Normal()
     {
-        if(currentHp <= 0) // 만약, 현재 체력이 0보다 작거나 같다면
-        {
-            //플레이어 모델링(아바타나 fbx파일) ragdoll wizard 추가
-        }
-
-    }
-    private void PlayerOnDamaged()
-    {
-
-     }
-
-
-
-
-
-
-
-    #region 캐릭터 이동/ 점프
-
-    void Move() // 캐릭터 걷기, 달리기, 점프, 숙이기(Crouch)
-    {
-
-
         // 로컬 벡터로 움직이기
         x = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
 
         Vector3 movedir = new Vector3(x, 0f, v);
+        movedir = transform.TransformDirection(movedir); // 로컬 좌표 이동
+        movedir.Normalize(); // 0 ~ 1 사이의 값만 나온다.
 
+        // movedir.y = yPos; // 계속해서 아래로 중력 가속도를 받음    
+
+        cc.Move(movedir * walkSpeed * Time.deltaTime);  // 걷는 속도로 캐릭터 움직임
+
+
+
+        if (movedir.magnitude > 0.5f)
+        {
+            currentState = PlayerState.Walk;
+        }
+
+       
+    }
+
+
+    void Walk()
+    {
+        // 로컬 벡터로 움직이기
+        x = Input.GetAxis("Horizontal");
+        v = Input.GetAxis("Vertical");
+
+        Vector3 movedir = new Vector3(x, 0f, v);
         movedir = transform.TransformDirection(movedir); // 로컬 좌표 이동
         movedir.Normalize(); // 속력
 
+        yPos += gravityPower.y * gravityVelocity * Time.deltaTime; // 중력의 y축값 * 중력속도 * 시간 보간 
+        movedir.y = yPos; // 캐릭터의 y축에 중력적용
 
+        cc.Move(movedir * walkSpeed * Time.deltaTime);  // 걷는 속도로 캐릭터 움직임
 
-        // 움직임 상태
-        isIdle = movedir.magnitude == 0; // 이동거리가 0이면 Idle 상태
-        isMoving = movedir.magnitude > 0; // 캐릭터가 움직이는 거리가 0보다 크면 ismoving 
-        isRunning = Input.GetKey(KeyCode.LeftShift); // 쉬프트를 누르고 있으면
-
-
-
-        if (isMoving)  // ismoving 
+        if (movedir.magnitude > 0.5f && Input.GetKeyDown(KeyCode.LeftShift))
         {
-            if (isRunning)
-            {
-                if (currentStamina > 0)
-                {
-                    currentSpeed = runSpeed;
-                    UseStamina(15);
-                    isRunning = true;
-                    // animator.SetFloat("MoveFloat" , 0.3f );
-                }
-                else
-                {
-                    isRunning = false;
-                    currentSpeed = walkSpeed;
-                    // animator.SetFloat("MoveFloat", 0.1f);
-
-                    // animator.SetBool("run", false);
-                    // animator.SetBool("walk", true);
-                }
-
-            }
-            else
-            {
-                currentSpeed = walkSpeed;
-                // animator.SetFloat("MoveFloat", 0f);
-
-                //isMoving = true;
-                // animator.SetBool("walk", true);
-
-            }
+            currentState = PlayerState.Run;
         }
         else
         {
-            isIdle = true;
-
-            //  animator.SetBool("idle", true);
+            currentState = PlayerState.Walk;
         }
 
+        if (movedir.magnitude < 0.5f)
+        {
+            currentState = PlayerState.Normal;
+        }
+    }
+
+    void Run()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && currentStamina > 0)
+        {
+            // 이동을 위한 로컬 변수
+            float x = Input.GetAxis("Horizontal");
+            float v = Input.GetAxis("Vertical");
+
+            Vector3 movedir = new Vector3(x, 0f, v);
+            movedir = transform.TransformDirection(movedir); // 로컬 좌표 이동
+            movedir.Normalize(); // 
+
+            yPos += gravityPower.y * gravityVelocity * Time.deltaTime; // 중력의 y축값 * 중력속도 * 시간 보간 
+            movedir.y = yPos; // 캐릭터의 y축에 중력적용
 
 
+            cc.Move(movedir * runSpeed * Time.deltaTime);  // 달리는 속도로 캐릭터 움직임
+
+            UseStamina(15);
+        }
+        else
+        {
+            Walk();
+        }
+    }
+
+    void Jump()
+    {
         // 캐릭터 점프
-        yPos += gravityPower.y * gravityVelocity * Time.deltaTime; // 중력의 y축값 * 중력속도 * 시간 보간 
+        yPos += gravityPower.y * gravityVelocity * Time.deltaTime; // 중력의 y축값 * 중력속도 * 시간 보간  // 상시 캐릭터에게 y축 아래로 적용되는 힘.
 
-        // 상시 캐릭터에게 y축 아래로 적용되는 힘.
-        isGround = cc.collisionFlags == CollisionFlags.CollidedBelow;
+
+        isGround = cc.collisionFlags == CollisionFlags.CollidedBelow; // 바닥체크
 
 
         if (isGround) // 땅바닥이면
@@ -376,22 +341,49 @@ public class PlayerMove : MonoBehaviour
         {
             if (currentStamina > 15) // 상수로 넣음 
             {
-                yPos = jumpHeight; // 점프시 일시적으로 중력값을 점프 높이로 치환
+                yPos = jumpHeight; // 점프시 일시적으로 중력값을 점프 높이로 바꿈
                 maxJump--;
+                // 점프 모션 
                 UseStamina(15);
             }
 
         }
 
-        movedir.y = yPos;
+    }
 
-        cc.Move(movedir * currentSpeed * Time.deltaTime);  // 움직임
+
+
+    void Ladder()
+    {
+
+
+        float y = Input.GetAxis("Vertical"); // vertical 입력을 하면 y 값을 받는다.
+
+        Vector3 ladderDir = new Vector3(0, y, -0.05f);  // 위 아래 로만 움직일 수 있다.
+
+        cc.Move(ladderDir * walkSpeed * Time.deltaTime); // ladderdir 방향으로  walk스피드로 움직인다.
+
+        gravityPower = Physics.gravity; // 중력값은 초기화
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            currentState = PlayerState.Walk;
+            Climb = false;
+        }
 
     }
-    #endregion
-    #region 캐릭터 회전
 
-    // 마우스 방향에 따른 캐릭터의 회전
+    void ClimbLadder()
+    {
+        if (Input.GetKeyDown(KeyCode.E)) // 사다리 콜라이더에 닿고 e를 누르면
+        {
+            Debug.Log("사다리에 닿았습니다.");
+            currentState = PlayerState.Ladder;
+        }
+    }
+
+
+
     void Rotate()
     {
         float mouseX = Input.GetAxis("Mouse X");
@@ -423,11 +415,151 @@ public class PlayerMove : MonoBehaviour
 
     }
 
+    void Attack() //플레이어 공격은 오직 플레이어가 Shover를 가지고 있을때만
+    {
+
+        if (selectedItem.name.Contains("Shover")) // 플레이어가 shover 태그의 게임 오브젝트를 들고있고
+        {
+            if (Input.GetMouseButtonDown(0)) // 좌클릭을 했다면
+            {
+                
+            }
+        }
+    }
+
+    public void Handlight() // 핸드라이트를 들고 있을때만
+    {
+        flashlightItem = null;
+
+        if (selectedItem != null && selectedItem.name.Contains("Flashlight"))
+        {
+            flashlightItem = selectedItem.GetComponent<Item_Flashlight>();
+        }
+        else if (newItem != null && newItem.name.Contains("Flashlight"))
+        {
+            flashlightItem = newItem.GetComponent<Item_Flashlight>();
+        }
+
+        if (flashlightItem != null)
+        {
+            if ((selectedItem.name.Contains("Flashlight")) || (newItem != null && newItem.name.Contains("Flashlight")))
+            {
+
+                flashlightItem.LightOnOff();
+
+            }
+            else
+            {
+                Debug.Log("tlqkfwls");
+            }
+        }
+
+        
+    }
+
+
+        void OnDamaged()
+    {
+
+    }
+
+    void Dead()
+    {
+
+    }
+
+    void Cinematic()
+    {
+
+    }
+
+
+
+    #region BoxCast는 닿은 첫번째 오브젝트만 감지하기에 OverlapBox를 쓰기로 함
+    //private void PlayerScan() // 우클릭하면 캐릭터 전방으로 스캔
+    //{
+    //    if(Input.GetMouseButtonDown(1)) // 우클릭을 하면
+    //    {
+    //        RaycastHit hitInfo; // 충돌체의 정보를 담을 변수
+    //        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward); // 카메라의 위치에서 카메라의 foward방향으로
+
+    //        bool isHit = Physics.BoxCast(ray.origin, boxSize / 2, ray.direction, out hitInfo, transform.rotation, rayDistance, 1 << 6);
+
+    //        if(isHit) // 박스 레이에 닿았다면
+    //        {               
+    //           Debug.Log("박스캐스트에 닿았습니다. " + hitInfo.collider.name);
+
+    //        }
+
+
+
+    //    }
+    //}
     #endregion
 
 
 
-    #region hp stamina 관리
+    private void Scan() // // OverlapBox 를 사용한 다중 감지 /  우클릭하면 캐릭터 전방으로 스캔 
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Vector3 boxCenter = (Camera.main.transform.position + Camera.main.transform.forward); // 메인 카메라의 정면방향으로 box를 그린다.
+
+            Collider[] hitColliders = Physics.OverlapBox(boxCenter, boxSize / 2, Quaternion.identity, 1 << 6); // 감지한 콜라이더를 담을 배열을 만든다.
+
+
+
+            if (hitColliders.Length > 0) // 만약, 감지된 콜라이더의 개수가 0보다 많다면
+            {
+                for (int i = 0; i < hitColliders.Length; i++) // 배열의 인덱스를 사용해 출력한다
+                {
+                    Collider collider = hitColliders[i]; // i 번째의 콜라이더를 가져오고
+                    Item item = collider.GetComponent<Item>(); // 그 콜라이더 안에 잇는 item 컴포넌트를 가져온다
+
+                    if (item != null)
+                    {
+                       
+                        // Item 컴포넌트의 name과 value를 출력한다.
+                        Debug.Log("Item Name: " + item.itemName);
+                        Debug.Log("Item Value: " + item.itemValue);
+
+                        item.ShowItemInfo(); // UI 텍스트를 활성화하여 정보를 표시합니다.
+
+
+
+                    }
+                    else
+                    {
+                        Debug.Log("아무 오브젝트도 찾지 못했습니다." + collider.name);
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("아무것도 감지하지 못했습니다.");
+            }
+
+
+        }
+    }
+
+    private void OnDrawGizmos() // 씬 뷰에서 Box Cast를 그려서확인한다.
+    {
+        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);  // 빨간줄은 레이
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(ray.origin, ray.direction * rayDistance);
+
+        // 빨간줄의 끝에 BoxCast의 박스를 그립니다.
+        Vector3 halfExtents = boxSize / 2; // 박스길이의 반
+        Vector3 castEnd = ray.origin + ray.direction * rayDistance; // ray의 시작 위치에서 ray의 방향 * 최대거리
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(castEnd, boxSize);
+
+    }
+
+
+
+    #region 체력 스태미너 / 체력바 스태미너바
     // 스태미너 관련 함수
     private void UseStamina(int amount)
     {
@@ -437,19 +569,17 @@ public class PlayerMove : MonoBehaviour
         {
             currentStamina = 0;
 
-            isRunning = false;
-
 
         }
     }
 
-    private void RegenStamina(int amount) // 스태미너 재생
+    private void RegenStamina() // 스태미너 재생
     {
         if (currentStamina < maxStamina)
         {
             if (isregenStamina) // isregenStamina 가 true 라면
             {
-                currentStamina += amount * Time.deltaTime; // 스태미너를 재생한다.
+                currentStamina += 5 * Time.deltaTime; // 스태미너를 재생은 상수로
             }
         }
         else if (currentStamina <= 0) // 현재 스태미너가 0이거나 0보다 적다면
@@ -476,17 +606,14 @@ public class PlayerMove : MonoBehaviour
 
 
 
-
-
     // 스태미너 체력 증,감소를 슬라이더, 이미지에 업데이트
     private void UpdateUI()  // HP stamina 슬라이더를 매 프레임마다 업데이트,  Mathf.Lerp를 사용해서 슬라이더를 부드럽게 
     {
-        // 스태미너 슬라이드
-
+        // 스태미너 칸
         float targetStamina = currentStamina / maxStamina; // 타겟 스태미나 벨류값은 max스태미너 값에서 currentstamina값의 비율
 
 
-        staminaSlider.value = Mathf.Lerp(currentStamina, targetStamina, Time.deltaTime * 0.5f);
+        staminaSlider.value = Mathf.Lerp(currentStamina, targetStamina, Time.deltaTime * 0.2f);
 
         // 좀더 부드럽게 증감되게 수정필요
         //staminaSlider.value = Mathf.Lerp(staminaSlider.value, currentStamina / maxStamina, Time.deltaTime * 10f);
@@ -495,8 +622,6 @@ public class PlayerMove : MonoBehaviour
 
 
         // 체력 칸
-
-
         float targetHp = currentHp / maxHp;
 
         Color hpBarAlpha = hpBar.color; // hp바 이미지의 컬러를, 컬러 클래스의 변수로 넣어서 컨트롤
@@ -525,6 +650,7 @@ public class PlayerMove : MonoBehaviour
         }
 
     }
+
     #endregion
 
 
@@ -533,84 +659,52 @@ public class PlayerMove : MonoBehaviour
 
 
 
-
-
-
-
-
-
-
-
-
-
-    //사다리를 구현한다
-    //플레이어가 Ladder Tag가 붙은 Collider와 stay 할경우]
-    //플레이어의 z,x축 움직임은 제한하고
-    // w, s를 눌렀을때 각 각 transform.up , -transform.up 의 방향으로 walkSpeed 로 이동한다.
-    // 사다리 안에서는 수직으로만 움직이게 제한
-    // 그리고 사다리 콜라이더에 닿았을때 E 를 화면에 출력되게 하기 - 추가할것
-
-
-    public void Laddermove()
-    {
-        float y = Input.GetAxis("Vertical"); // vertical 입력을 하면 y 값을 받는다.
-
-        Vector3 ladderDir = new Vector3(0, y, -0.05f);  // 방향은 y축이다.
-
-        cc.Move(ladderDir * walkSpeed * Time.deltaTime); // ladderdir 방향으로  walk스피드로 움직인다.
-
-        gravityPower = Physics.gravity; 
-
-    }
-
-
-    private void OnTriggerStay(Collider other) // 사다리에 닿아있을때 isOnladder 를 true 로 하고
-    {
-        if (other.gameObject.CompareTag("Ladder"))
-        {
-            print("사다리에 닿았습니다.");
-            isOnLadder = true;
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)  // 아이템에 닿음
+    // 충돌 판정
+    private void OnTriggerEnter(Collider other)  // 처음 충돌시
     {
 
         if (other.CompareTag("Item")) // item 태그의 콜라이더와 충돌했다면
         {
-            Debug.Log("아이템에 닿았습니다.");
+            //Debug.Log("아이템에 닿았습니다.");
 
-            collideItem = true; // 아이템에 닿음
-            currentItem = other.gameObject; // 현재 들고있는 아이템은 지금 아이템 오브젝트이다.
-            //currentItem = other.gameObject; // 현재 충돌 중인 아이템을 currentitem변수에 넣기
+            collideItem = true; // 아이템에 닿았느지 체크
+
+            if (currentItem == null)
+            {
+                currentItem = other.gameObject; // 현재 충돌한 아이템은 currentItem
+                Debug.Log(" currentitem을 추가했습니다.");
+            }
+
+
         }
 
-       
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Ladder") && currentState != PlayerState.Ladder)
+        {
+            Climb = true;
+        }
+
     }
 
     private void OnTriggerExit(Collider other) // 사다리에서 떨어짐,  아이템에서 떨어짐
     {
-
-        // 사다리에서 떨어졌을때
-        if (other.gameObject.CompareTag("Ladder"))
+        if (other.gameObject.CompareTag("Ladder")) // 사다리 콜라이더에서 떨어졌을때
         {
             print("사다리에서 나왔습니다.");
-            isOnLadder = false;
-            if (isLadder)
-            {
-                isLadder = false;
-                gravityPower = Physics.gravity;
-            }
 
         }
 
         // 아이템과의 충돌이 종료된 경우, 현재 아이템을 null로 설정
-        if (other.CompareTag("Item")) //&& other.gameObject == currentItem)
+        if (other.CompareTag("Item") && other.gameObject == currentItem)
         {
             Debug.Log("아이템에서 떨어졌습니다.");
 
             collideItem = false;
             currentItem = null;
+            Debug.Log("currentitem 이 null입니다");
             //currentItem = null;
         }
 
@@ -619,112 +713,230 @@ public class PlayerMove : MonoBehaviour
 
 
 
+    
+
+    //public void PickupItem() //아이템 줍기  
+    //{
+    //    // // E를 누르고 현재 아이템에 닿아있다면 
+    //    if (Input.GetKeyDown(KeyCode.E) && (collideItem))
+    //    {
+    //        if (currentItem != null) // 그리고 주울 아이템이 null 값이 아니라면
+    //        {
+
+    //            if (holdItem == false) // 현재 들고있는 아이템이 null 값이라면
+    //            {
+    //                selectedItem = Instantiate(currentItem, RightHand.position, RightHand.rotation); //  Player-RightHand.Position에 currentItem 을 생성한다. // 현재 아이템을 홀드아이템 변수로 넣는다.
+    //                selectedItem.transform.SetParent(RightHand); // player의 righthand를 주운 오브젝트의 부모로 한다.
 
 
-    // 아이템 줍기 메커니즘 1
+    //                Rigidbody rb = selectedItem.GetComponent<Rigidbody>(); // item 의 rigidbody 컴포넌트를 가져와서
+    //                if (rb != null)
+    //                {
+    //                    rb.isKinematic = true; // 떨어지지 않게 iskineitc 을 체크
+    //                }
 
+    //                Destroy(currentItem); // 씬에서 지운다
+    //                currentItem = null; // currentItem 초기화
+    //                Debug.Log("아이템을 주웠습니다.");
 
-    // 플레이어가 item tag인 game object와 충돌하고
+    //            }
+    //        }
+    //    }
 
-    // 플레이어가 e 를 누르면 
+    //}
 
-    // 아이템은 사라지고(Destroy)
-
-    // 아이템은 플레이어 transform의 자식 위치에 생성된다.
-
-    // 아이템을 player의 자식의 자식 오브젝트로 만든다(가지고 다닐수있게)
-
-
-    public void PickupItem() //아이템 줍기  
+    public void PickupItem() // 이건 양손 아이템을 들때만
     {
-        // // E를 누르고 현재 아이템에 닿아있다면 
-        if (Input.GetKeyDown(KeyCode.E) && (collideItem))
+        if(Input.GetKeyDown(KeyCode.E) && (collideItem))
         {
-            if (currentItem != null) // 그리고 주울 아이템이 null 값이 아니라면
+            if (currentItem.name.Contains("Casher")) 
             {
+                currentItem.transform.SetParent(RightHand);
+                currentItem.transform.position = RightHand.transform.position;
+                currentItem.transform.rotation = RightHand.transform.rotation;
 
-                if (holdItem == null) // 현재 들고있는 아이템이 null 값이라면
+                 Rigidbody rb = selectedItem.GetComponent<Rigidbody>(); // item 의 rigidbody 컴포넌트를 가져와서
+                if (rb != null)
                 {
-                    holdItem = Instantiate(currentItem, RightHand.position, RightHand.rotation); //  Player-RightHand.Position에 currentItem 을 생성한다. // 현재 아이템을 홀드아이템 변수로 넣는다.
-                    holdItem.transform.SetParent(RightHand); // player의 righthand를 주운 오브젝트의 부모로 한다.
-
-
-                    Rigidbody rb = holdItem.GetComponent<Rigidbody>(); // item 의 rigidbody 컴포넌트를 가져와서
-                    if (rb != null)
-                    {
-                        rb.isKinematic = true; // 떨어지지 않게 iskineitc 을 체크
-                    }
-
-                    Destroy(currentItem); // 씬에서 지운다
-                    currentItem = null; // currentItem 초기화
-                    Debug.Log("아이템을 주웠습니다.");
-
+                    rb.isKinematic = true; // 떨어지지 않게 iskineitc 을 체크
                 }
+
+                // 이 양손 오브젝트를 들면 다른 아이템과는 상호작용하지 못하도록
+               
+                holdItem = true;
+                
             }
         }
-
     }
 
     public void DropItem() // 아이템 버리기
     {
 
-        if (Input.GetKeyDown(KeyCode.G) && holdItem != null)  // G를 누르고 들고 있는 아이템이 null이 아니라면
+        if (Input.GetKeyDown(KeyCode.G) && holdItem)  // G를 누르고 들고 있는 아이템을 들고있다면
         {
             Debug.Log("G키가 입력됬습니다.");
 
-            holdItem.transform.SetParent(null); // Righthand에서 벗어남
             Vector3 dropPos = transform.position + transform.forward * 3f; // 플레이어의 전방 3f의 거리앞에서 떨어뜨릴 지점을 생성
-            holdItem.transform.position = dropPos; // hold 아이템의 위치를 droppos로 이동
+
+            if (selectedItem != null)
+            {
+                selectedItem.transform.SetParent(null); // Righthand에서 벗어남
+                selectedItem.transform.position = dropPos; // hold 아이템의 위치를 droppos로 이동
+                selectedItem.SetActive(true);
+
+
+                Rigidbody rb = selectedItem.GetComponent<Rigidbody>(); // 공중에서 생성된 아이템을 떨어뜨리기 위해 item 에 rigidbody를 추가
+
+                if (rb != null)
+                {
+                    rb.isKinematic = false; // 중력의 작용을 받기 위해 iskinetic을 체크해제
+                }
+                else
+                {
+                    Debug.Log("Rigidbody 가 없습니다.");
+                }
+
+                inventory.RemoveItem(selectedIndex);
+
+                holdItem = false; // 현재 손에 든 아이템을 null로 설정
+                selectedItem = null; // 현재 선택된 아이템을 null로 설정
+            
+            }
+            
+        }
+        else if (Input.GetKeyDown(KeyCode.G))
+        {            
+            {
+                Debug.Log("G 키가 눌렸지만 selectedItem이 null입니다.");
+            }
+        }
 
 
 
-            Rigidbody rb = holdItem.GetComponent<Rigidbody>(); // 공중에서 생성된 아이템을 떨어뜨리기 위해 item 에 rigidbody를 추가
+
+
+
+    }
+
+
+
+
+    public void StoreItemInventory() // 처음 씬에서 아이템을 주웠을때 인벤토리에 저장하는 함수
+    {
+        if (currentItem != null && collideItem) // 만약, 아이템과 충돌하고, 현재 아이템이 null 이 아니라라면
+        {
+            if (Input.GetKeyDown(KeyCode.E)) // e를 누르면
+            {
+                inventory.AddItem(currentItem);
+                currentItem.SetActive(false);
+                currentItem = null;
+            }
+
+        }
+
+    }
+
+    public void SwitchItem(int index) // 이건 아이템이 배열에 있을때 아이템이 겹치지않고 바꿀수 있게해주는 함수
+    {
+       
+        GameObject newItem = inventory.SelectItem(index); // 배열 index 번에 있는 데이터를 newItem 변수에 넣는다.
+
+        // 만약, 배열에 아이템이 있고 손에 뭐가 있을때
+        if (newItem != null)
+        {
+            if (holdItem)
+
+            {
+                // 이 함수를 실행
+                RemoveHandItem();
+
+            }
+
+
+            // 만약 배열에 아이템이 있을경우
+            Debug.Log("홀드아이템이 생겻습니다.");
+
+            newItem.transform.SetParent(RightHand); // Righthand 를 부모로하고
+            newItem.transform.position = RightHand.transform.position;           
+            newItem.transform.forward = RightHand.transform.forward;
+            //newItem.transform.position = Vector3.zero;
+            //newItem.transform.rotation = Quaternion.identity;
+
+
+            if (newItem != null && newItem.name.Contains("Shover"))
+            {
+                // 삽의 회전값
+                Vector3 shoverVector = new Vector3(3.047f, -240.752f, 1.705f);
+
+                Quaternion shoverRotation = Quaternion.Euler(shoverVector);
+         
+                newItem.transform.position = RightHand.transform.position;
+                newItem.transform.rotation = shoverRotation;
+            }
+            else
+            {
+                newItem.transform.forward = RightHand.transform.forward;
+            }
+                       
+            
+
+            // 공중에서 생성된 아이템을 떨어뜨리기 위해 item 에 rigidbody를 추가
+            Rigidbody rb = newItem.GetComponent<Rigidbody>();
+
             if (rb != null)
             {
-                rb.isKinematic = false; // 중력의 작용을 받기 위해 iskinetic을 체크해제
+                rb.isKinematic = true; // 들고있을땐 중력 안받기
             }
             else
             {
                 Debug.Log("Rigidbody 가 없습니다.");
             }
 
-            holdItem = null; // hold아이템을 초기화
-
+            selectedItem = newItem; // 새 아이템이 selected item 이 된다
+            newItem.SetActive(true);
+            holdItem = true;
+            selectedIndex = index; // 선택된 아이템의 인덱스 설정
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.G))
-            {
-                Debug.Log("G 키가 눌렸지만 holdItem이 null입니다.");
-            }
+            Debug.Log("선택된 아이템이 없습니다.");
+            RemoveHandItem();
         }
-
     }
-}
-
-
-
-    // 아이템 줍기 메커니즘 2 - 인벤토리에 저장, 별개의 Gameobject를 만들어서 Inventory로 사용한다.
-
-    // holditem != null 이고
-    // inventory[i] == null 이라면
-    // inventory[i] 에 저장하고
-    // holditem 을 Destroy 한다
-    // holdItem == null 로 초기화 한다.
-
-  
-
     
 
+    public void RemoveHandItem() // 현재 손에 든 물건을 비활성화하는 함수
+    {    // 손에 물건이 있고 번호를 입력했을때 
+        if (selectedItem != null)
+        {            
+                selectedItem.SetActive(false); // 현재 들고 있는 아이템 비활성화
+                selectedItem.transform.SetParent(null); // 아이템의 부모를 제거하여 월드에 독립적으로 배치
+                Rigidbody rb = selectedItem.GetComponent<Rigidbody>();
+
+                if (rb != null)
+                {
+                    rb.isKinematic = false; // 중력의 영향을 받도록 설정
+                }
+
+                holdItem = false;
+
+            }
+        }
+    }
 
 
 
 
 
-    //아이템 줍기
-    //public void ItemPickUp()
-    //{
-    //    RaycastHit hit;
+
+
+
+
+   
+
+
+
+//    RaycastHit hit;
 
 //    Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward); // 레이의 발사위치는 메인 카메라
 
