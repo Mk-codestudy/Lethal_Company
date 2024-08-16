@@ -691,6 +691,7 @@ public class PlayerMove : MonoBehaviour
         {
             print("사다리에서 나왔습니다.");
             currentState = PlayerState.Normal;
+            Climb = false; // 사다리 콜라이더를 벗어나면 climb 을 false
 
         }
         
@@ -908,6 +909,18 @@ public class PlayerMove : MonoBehaviour
         {            
                 selectedItem.SetActive(false); // 현재 들고 있는 아이템 비활성화
                 selectedItem.transform.SetParent(null); // 아이템의 부모를 제거하여 월드에 독립적으로 배치
+
+            //주전자를 주우면 주전자의 scale값은 0.6f로 
+            if (selectedItem.name.Contains("Kettle"))
+            {
+                selectedItem.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+
+            }
+            else
+            {
+                return;
+            }
+
                 Rigidbody rb = selectedItem.GetComponent<Rigidbody>();
 
                 if (rb != null)
