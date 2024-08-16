@@ -250,6 +250,11 @@ public class PlayerMove : MonoBehaviour
 
     private void OnDrawGizmos() // 씬 뷰에서 Box Cast를 그려서확인한다.
     {
+        if(Camera.main == null)
+        {
+            return;
+        }
+
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);  // 빨간줄은 레이
         Gizmos.color = Color.red;
         Gizmos.DrawRay(ray.origin, ray.direction * rayDistance);
@@ -417,9 +422,10 @@ public class PlayerMove : MonoBehaviour
         rotX = Mathf.Clamp(rotX, -60f, 60f);
 
         transform.eulerAngles = new Vector3(0, rotY, 0f);
-
-        Camera.main.transform.GetComponent<Follow_Cam>().rotX = rotX; // 카메라에 있는 followcam의 스크립트의 rotx 변수를 받아옴
-
+        if (Camera.main != null)
+        {
+            Camera.main.transform.GetComponent<Follow_Cam>().rotX = rotX; // 카메라에 있는 followcam의 스크립트의 rotx 변수를 받아옴
+        }
 
     }
 
