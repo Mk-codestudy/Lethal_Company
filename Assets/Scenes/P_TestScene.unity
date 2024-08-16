@@ -283,6 +283,7 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: 2f1137196e0b59e46a6928efe3e52393, type: 3}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1 &124358700
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,6 +420,8 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 124358700}
   m_CullTransparentMesh: 1
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
@@ -672,6 +675,7 @@ BoxCollider:
   m_Center: {x: 1.850765e-10, y: 0.0061235987, z: -0.013605055}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!1 &473552311
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,6 +783,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 473552311}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
@@ -1551,6 +1557,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -1657,6 +1664,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemCanvas: {fileID: 2033855566}
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
@@ -1889,6 +1898,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1 &1213081248
@@ -2125,6 +2135,8 @@ CapsuleCollider:
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 --- !u!1001 &1274740909
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2296,8 +2308,13 @@ MonoBehaviour:
   RightHand: {fileID: 1276091210}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   inventory: {fileID: 1106959822}
   currentState: 0
+=======
+  inventory: {fileID: 1016541212}
+  currentState: 4
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
   inventory: {fileID: 1016541212}
   currentState: 4
@@ -2440,6 +2457,7 @@ MonoBehaviour:
   - {fileID: 616987172}
   - {fileID: 105990942}
   followCam: {fileID: 0}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1 &1347365027
@@ -2724,6 +2742,8 @@ CanvasRenderer:
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 --- !u!1 &1441498683
 GameObject:
   m_ObjectHideFlags: 0
@@ -2799,6 +2819,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1441498683}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1 &1499720264
@@ -3723,6 +3744,8 @@ Canvas:
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 --- !u!1 &1793987113
 GameObject:
   m_ObjectHideFlags: 0
@@ -3895,6 +3918,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1 &1896752603 stripped
@@ -4128,6 +4152,8 @@ CanvasRenderer:
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 --- !u!1 &1916359680
 GameObject:
   m_ObjectHideFlags: 0
@@ -4262,6 +4288,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 --- !u!1 &2112690941
@@ -4520,6 +4547,8 @@ PrefabInstance:
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 --- !u!1001 &2069642574411675030
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4633,6 +4662,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     - target: {fileID: 3786297727612538081, guid: 47914ab96f5057c42a63e08341b21762,
         type: 3}
       propertyPath: m_Enabled
@@ -4659,6 +4689,9 @@ PrefabInstance:
       value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: 4299931214241487912, guid: 47914ab96f5057c42a63e08341b21762,
+=======
+    - target: {fileID: 5632862408961895324, guid: 38458f2e72599594696dcaf7430d17ca,
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
     - target: {fileID: 5632862408961895324, guid: 38458f2e72599594696dcaf7430d17ca,
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
@@ -4729,6 +4762,7 @@ PrefabInstance:
     m_Modifications:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     - target: {fileID: 664914340326671381, guid: 638956490328d7b4f9edf8f135edb68f,
         type: 3}
       propertyPath: m_IsKinematic
@@ -4739,6 +4773,8 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
@@ -4868,6 +4904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     - target: {fileID: 6261665135909082791, guid: 9ef430dea778da94cad3f3dd902e188f,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4878,6 +4915,8 @@ PrefabInstance:
       propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
