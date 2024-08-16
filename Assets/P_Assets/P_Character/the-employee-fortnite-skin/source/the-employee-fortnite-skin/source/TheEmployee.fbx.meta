@@ -1,5 +1,6 @@
 fileFormatVersion: 2
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<<< HEAD:Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
 <<<<<<< HEAD
 <<<<<<<< HEAD:Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
@@ -64,6 +65,9 @@ guid: e2a4d41688db87e4b94dfafba81f71be
 guid: e442ed41830641e498a31e813cd092f6
 >>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+guid: e442ed41830641e498a31e813cd092f6
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -80,6 +84,7 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<<< HEAD:Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
 <<<<<<< HEAD
@@ -106,6 +111,9 @@ ModelImporter:
     rigImportErrors: "Invalid copied Avatar Rig Configuration:\n\tNo human bone found.
       Ensure both rig type match\n"
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+    rigImportErrors: 
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -113,7 +121,11 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
+<<<<<<< HEAD
     animationCompression: 3
+=======
+    animationCompression: 1
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -182,6 +194,7 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
+<<<<<<< HEAD
     hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
@@ -189,6 +202,15 @@ ModelImporter:
   animationType: 3
   humanoidOversampling: 1
   avatarSetup: 1
+=======
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

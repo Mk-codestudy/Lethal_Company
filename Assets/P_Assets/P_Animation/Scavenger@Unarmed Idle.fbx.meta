@@ -1,6 +1,7 @@
 fileFormatVersion: 2
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<<< HEAD:Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
 <<<<<<<< HEAD:Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
 guid: e962c043e00280a4fa43982ffffae6d0
@@ -54,6 +55,9 @@ guid: e962c043e00280a4fa43982ffffae6d0
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+guid: e962c043e00280a4fa43982ffffae6d0
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -70,6 +74,7 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     rigImportErrors: "Invalid copied Avatar Rig Configuration:\n\tNo human bone found.
@@ -101,6 +106,10 @@ ModelImporter:
     rigImportErrors: "Invalid copied Avatar Rig Configuration:\n\tNo human bone found.
       Ensure both rig type match\n"
 >>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+    rigImportErrors: "Invalid copied Avatar Rig Configuration:\n\tNo human bone found.
+      Ensure both rig type match\n"
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
     rigImportWarnings: 
     animationImportErrors: 
