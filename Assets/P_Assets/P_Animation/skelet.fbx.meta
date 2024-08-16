@@ -1,5 +1,6 @@
 fileFormatVersion: 2
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<<< HEAD:Assets/P_Assets/P_Animation/skelet.fbx.meta
 <<<<<<<< HEAD:Assets/P_Assets/P_Animation/skelet.fbx.meta
 guid: e2a4d41688db87e4b94dfafba81f71be
@@ -10,8 +11,17 @@ guid: e442ed41830641e498a31e813cd092f6
 guid: e962c043e00280a4fa43982ffffae6d0
 >>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
 =======
+=======
+<<<<<<<< HEAD:Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 <<<<<<<< HEAD:Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
 guid: e962c043e00280a4fa43982ffffae6d0
+========
+guid: e2a4d41688db87e4b94dfafba81f71be
+>>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/skelet.fbx.meta
+<<<<<<< HEAD
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
 ========
 guid: e2a4d41688db87e4b94dfafba81f71be
 >>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/skelet.fbx.meta
