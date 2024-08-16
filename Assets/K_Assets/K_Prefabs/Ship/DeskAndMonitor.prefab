@@ -874,6 +874,8 @@ MonoBehaviour:
   progressSlider: {fileID: 4493653954836144775}
   holdText: {fileID: 7880772208362119087}
   camshake: {fileID: 0}
+  sceneNumber: 0
+  audioClips: []
 --- !u!82 &819188099749752369
 AudioSource:
   m_ObjectHideFlags: 0

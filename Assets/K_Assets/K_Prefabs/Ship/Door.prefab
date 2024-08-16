@@ -799,6 +799,10 @@ MonoBehaviour:
   moneSpd: 8
   isDoorOpen: 0
   openUI: {fileID: 5225083156405740205}
+  audioClip: []
+  audioSource: {fileID: 0}
+  openSoundOnce: 0
+  closeSoundOnce: 1
 --- !u!1 &5213776247358350223
 GameObject:
   m_ObjectHideFlags: 0

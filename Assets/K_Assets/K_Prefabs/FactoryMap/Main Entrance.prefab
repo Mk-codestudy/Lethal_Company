@@ -912,15 +912,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c6fa07e323beff45bdef786659bf279, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneNumber: 2
   player: {fileID: 0}
   interactionDistance: 2
   showGizmoSphare: 0
   showGizmoLine: 0
   doorHoldTime: 1.5
+  factoryGate: 0
+  offense: {fileID: 0}
+  factory: {fileID: 0}
   progressSlider: {fileID: 200023394307249826}
+  prograssUI: {fileID: 0}
   canvas: {fileID: 8306420270967842528}
-  mapManager: {fileID: 0}
 --- !u!1001 &2827964961607272319
 PrefabInstance:
   m_ObjectHideFlags: 0

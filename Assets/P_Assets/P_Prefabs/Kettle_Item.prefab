@@ -432,8 +432,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: "\uC8FC\uC804\uC790"
   itemValue: 0
-  itemName_text: {fileID: 4722135761250020030}
-  itemName_value: {fileID: 4235312939612038871}
+  itemName_text: {fileID: 0}
+  itemName_value: {fileID: 0}
+  itemSprite: {fileID: 0}
+  mainCamera: {fileID: 0}
 --- !u!54 &-491082899030253276
 Rigidbody:
   m_ObjectHideFlags: 0
