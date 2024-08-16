@@ -1695,7 +1695,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 100
   m_WholeNumbers: 1
-  m_Value: 1
+  m_Value: 100
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2234,9 +2234,9 @@ MonoBehaviour:
   maxHp: 0
   maxStamina: 100
   currentHp: 0
-  currentStamina: 0
+  currentStamina: 100
   hpBar: {fileID: 531509207}
-  staminaSlider: {fileID: 374848367}
+  staminaSlider: {fileID: 853419124}
   jumpHeight: 35
   maxJump: 1
   gravityVelocity: 100
