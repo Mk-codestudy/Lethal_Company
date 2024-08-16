@@ -18,19 +18,19 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 0.9
   intensity:
     m_OverrideState: 1
-    m_Value: 1.3
+    m_Value: 1
   scatter:
-    m_OverrideState: 1
-    m_Value: 0.8
+    m_OverrideState: 0
+    m_Value: 0.7
   clamp:
     m_OverrideState: 0
     m_Value: 65472
   tint:
     m_OverrideState: 0
-    m_Value: {r: 0, g: 0, b: 0, a: 1}
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
   highQualityFiltering:
     m_OverrideState: 0
     m_Value: 0
@@ -115,25 +115,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb2952b95454955ba507c3d96778a76, type: 3}
   m_Name: VhsVol
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   _weight:
     m_OverrideState: 1
     m_Value: 0.428
   _bleed:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   _rocking:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0
   _tape:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   _noise:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0.5
   _flickering:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0
   _glitch:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: {r: 1, g: 0, b: 0, a: 1}

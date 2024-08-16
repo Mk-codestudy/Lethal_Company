@@ -53,7 +53,6 @@ public class GameManager_Proto : MonoBehaviour
     AudioSource audioSource;
     bool alreadyPlayed; //사운드 한번만 재생하게해주는 코드
 
-
     private void Awake()
     {
         if (gm == null)
@@ -105,7 +104,6 @@ public class GameManager_Proto : MonoBehaviour
     //플레이어 사망 함수
     public void PlayerDead()
     {
-
         //플레이어 레그돌 실행
         //각종 플레이어 기능(이동, 그랩, 기타등등...) 상실
         
@@ -186,6 +184,7 @@ public class GameManager_Proto : MonoBehaviour
     {
          playerHP -= enumDamage; //적 데미지만큼 플레이어 HP 차감
     }
+
 
     //함선으로 돌아가는 씬 조절 함수
     public void RoundOver()
