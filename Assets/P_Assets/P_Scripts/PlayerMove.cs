@@ -356,10 +356,9 @@ public class PlayerMove : MonoBehaviour
     void Ladder()
     {
 
-
         float y = Input.GetAxis("Vertical"); // vertical 입력을 하면 y 값을 받는다.
 
-        Vector3 ladderDir = new Vector3(0, y, -0.05f);  // 위 아래 로만 움직일 수 있다.
+        Vector3 ladderDir = new Vector3(0, y, -0.1f);  // 위 아래 로만 움직일 수 있다.
 
         cc.Move(ladderDir * walkSpeed * Time.deltaTime); // ladderdir 방향으로  walk스피드로 움직인다.
 
@@ -694,9 +693,10 @@ public class PlayerMove : MonoBehaviour
         if (other.gameObject.CompareTag("Ladder")) // 사다리 콜라이더에서 떨어졌을때
         {
             print("사다리에서 나왔습니다.");
+            currentState = PlayerState.Normal;
 
         }
-
+        
         // 아이템과의 충돌이 종료된 경우, 현재 아이템을 null로 설정
         if (other.CompareTag("Item") && other.gameObject == currentItem)
         {
