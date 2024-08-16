@@ -3,6 +3,8 @@ fileFormatVersion: 2
 <<<<<<<< HEAD:Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
 <<<<<<< HEAD
 <<<<<<<< HEAD:Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
+<<<<<<< HEAD
+<<<<<<<< HEAD:Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
 guid: e442ed41830641e498a31e813cd092f6
 ========
 guid: e2a4d41688db87e4b94dfafba81f71be
@@ -26,6 +28,42 @@ guid: e962c043e00280a4fa43982ffffae6d0
 guid: e442ed41830641e498a31e813cd092f6
 >>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+========
+guid: e962c043e00280a4fa43982ffffae6d0
+>>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
+=======
+<<<<<<<< HEAD:Assets/P_Assets/P_Animation/skelet.fbx.meta
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<<< HEAD:Assets/P_Assets/P_Animation/skelet.fbx.meta
+<<<<<<<< HEAD:Assets/P_Assets/P_Animation/skelet.fbx.meta
+guid: e2a4d41688db87e4b94dfafba81f71be
+========
+guid: e442ed41830641e498a31e813cd092f6
+>>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
+========
+guid: e962c043e00280a4fa43982ffffae6d0
+>>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
+=======
+=======
+<<<<<<<< HEAD:Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+<<<<<<<< HEAD:Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
+guid: e962c043e00280a4fa43982ffffae6d0
+========
+guid: e2a4d41688db87e4b94dfafba81f71be
+>>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/skelet.fbx.meta
+<<<<<<< HEAD
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+=======
+========
+guid: e2a4d41688db87e4b94dfafba81f71be
+>>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/skelet.fbx.meta
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+========
+guid: e442ed41830641e498a31e813cd092f6
+>>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -45,6 +83,8 @@ ModelImporter:
 <<<<<<< HEAD
 <<<<<<<< HEAD:Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
 <<<<<<< HEAD
+<<<<<<<< HEAD:Assets/P_Assets/P_Character/the-employee-fortnite-skin/source/the-employee-fortnite-skin/source/TheEmployee.fbx.meta
+<<<<<<< HEAD
     rigImportErrors: 
 =======
     rigImportErrors: "Copied Avatar Rig Configuration mis-match. Transform hierarchy
@@ -57,6 +97,14 @@ ModelImporter:
 =======
     rigImportErrors: "Copied Avatar Rig Configuration mis-match. Transform hierarchy
       does not match:\n\tTransform 'mixamorig1:Hips' for human bone 'Hips' not found\n"
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
+========
+    rigImportErrors: "Invalid copied Avatar Rig Configuration:\n\tNo human bone found.
+      Ensure both rig type match\n"
+>>>>>>>> parent of 3eb0e30 (Merge branch 'Park'):Assets/P_Assets/P_Animation/Scavenger@Unarmed Idle.fbx.meta
+=======
+    rigImportErrors: "Invalid copied Avatar Rig Configuration:\n\tNo human bone found.
+      Ensure both rig type match\n"
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
     rigImportWarnings: 
     animationImportErrors: 
