@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Item_Kettle : Item // // Monobehaviour -> Item - > Kettle : item 으로 상속받음
 {
-    //public Vector3 itemScale = new Vector3(0.06f, 0.06f, 0.06f); // 주전자가 더럽게 커서 스케일을 줄이면 캐릭터와 이동하는데 괴리가 생겨서 스크립트상으로 조절
+    //public Vector3 itemScale = new Vector3(0.06f, 0.06f, 0.06f); // 주전자가 커서 스케일을 줄이면 캐릭터와 이동하는데 괴리가 생겨서 스크립트상으로 조절
 
 
 

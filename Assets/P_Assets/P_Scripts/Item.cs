@@ -23,10 +23,10 @@ public class Item : MonoBehaviour // 이 아이템 스크립트를 다른 아이템 스크립트에
         mainCamera = Camera.main; // 씬에서 메인 카메라를 찾아서 이 변수에 담는다.
 
 
-
+        // 아이템 생성과 동시에 ui 비활성화
         if (itemName_text != null)
         {
-            itemName_text.gameObject.SetActive(false);  // 아이템 생성과 동시에 ui 비활성화
+            itemName_text.gameObject.SetActive(false);
         }
         if (itemName_value != null)
         {
@@ -39,7 +39,6 @@ public class Item : MonoBehaviour // 이 아이템 스크립트를 다른 아이템 스크립트에
 
         itemName_text.text = itemName; // 아이템 이름표시
         itemName_value.text = itemValue.ToString(); // 가치표시
-
 
 
         if (itemName_text != null && itemName_value != null)
@@ -61,6 +60,7 @@ public class Item : MonoBehaviour // 이 아이템 스크립트를 다른 아이템 스크립트에
 
     public virtual void ShowItemInfo() // 자식에 상속하기위해 virtual 로 
     {
+        // 우클릭하면 숨겼던 ui 보이게 하기
         if(itemName_text != null)
         {
             itemName_text.gameObject.SetActive(true);
@@ -75,6 +75,8 @@ public class Item : MonoBehaviour // 이 아이템 스크립트를 다른 아이템 스크립트에
         Invoke("HideItemInfo", 3f);  // Invoke를 호출할 때 메서드 이름을 문자열로 전달 할 수 있다. 3초 뒤 ui 를 끈다.
     }
 
+
+    // 3초 뒤에 ui 다시 숨기기
     public virtual  void HideItemInfo()
     {
         if(itemName_text != null)
