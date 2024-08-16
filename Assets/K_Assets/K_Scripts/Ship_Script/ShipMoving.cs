@@ -24,13 +24,17 @@ public class ShipMoving : MonoBehaviour
     //이륙 Lerp용 퍼센트
     float departPercent = 0;
 
+
+    void Start()
+    {
+        
+    }
+
     void Update()
     {
         //배가 천천히 랜딩했으면 좋겠다
         //그리고 랜딩 여부는 bool로 체크되어야 한다(중간 저장이 되어야 하므로...)
         //Lerp로 천천히 착륙하기
-
-
 
         if (!departing && !alreadyLanding) //게임 시작시 (아직 착륙하지 않았고, 이륙하지도 않음)
         {
@@ -52,7 +56,7 @@ public class ShipMoving : MonoBehaviour
             transform.position = landPos.position;
 
         }
-        else if (departing) //게임 오버되고 이륙
+        else if (departing)
         {
             landPercent += Time.deltaTime * 0.2f;
             Vector3 result = Vector3.Lerp(landPos.position, departPos.position, departPercent);
@@ -60,5 +64,6 @@ public class ShipMoving : MonoBehaviour
 
             transform.position = result;
         }
+
     }
 }
