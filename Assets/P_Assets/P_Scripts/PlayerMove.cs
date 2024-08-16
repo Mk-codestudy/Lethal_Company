@@ -251,11 +251,14 @@ public class PlayerMove : MonoBehaviour
     private void OnDrawGizmos() // 씬 뷰에서 Box Cast를 그려서확인한다.
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
         if(Camera.main == null)
         {
             return;
         }
 
+=======
+>>>>>>> parent of 3eb0e30 (Merge branch 'Park')
 =======
 >>>>>>> parent of 3eb0e30 (Merge branch 'Park')
         Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);  // 빨간줄은 레이
