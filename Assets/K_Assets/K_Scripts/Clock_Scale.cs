@@ -4,40 +4,46 @@ using UnityEngine;
 
 public class Clock_Scale : MonoBehaviour
 {
-    public RectTransform targetUI; // 애니메이션 적용할 UI의 RectTransform
-    public Vector3 startScale = new Vector3(2f, 2f, 1f); // 초기 크기 (2, 2, 1)
-    public Vector3 endScale = new Vector3(1f, 1f, 1f); // 최종 크기 (1, 1, 1)
-    public float appearDuration = 1.0f; // 나타나는 애니메이션 시간
-    public float stayDuration = 1.0f; // 최종 크기에서 유지되는 시간
-    public float initialDelay = 8.0f; // 8초 대기 시간
+    public RectTransform uiElement;
+    public Vector3 initialScale = new Vector3(2, 2, 1);  // 초기 크기 (큰 크기)
+    public Vector3 finalScale = new Vector3(1, 1, 1);    // 최종 크기 (작아진 후 유지할 크기)
+    public float duration = 1f;                          // 크기가 작아지는 데 걸리는 시간
+    public float delay = 8f;                             // 시작 전 지연 시간
+    public float stayDuration = 1f;                      // 초기 크기 유지 시간
 
     void Start()
     {
-        targetUI.localScale = startScale; // UI의 초기 크기 설정
-        targetUI.gameObject.SetActive(false); // 처음에 비활성화
-        StartCoroutine(AnimateUI());
+        // 시작 시 UI 요소를 비활성화
+        uiElement.localScale = Vector3.zero;
+        uiElement.gameObject.SetActive(false);
+
+        // 딜레이 후에 시작
+        StartCoroutine(StartScaling());
     }
 
-    IEnumerator AnimateUI()
+    IEnumerator StartScaling()
     {
-        yield return new WaitForSeconds(initialDelay); // 8초 대기
+        // 딜레이 적용
+        yield return new WaitForSeconds(delay);
 
-        targetUI.gameObject.SetActive(true); // UI 활성화
+        // UI 요소 활성화
+        uiElement.gameObject.SetActive(true);
 
-        // 나타나는 애니메이션
-        float elapsedTime = 0f;
-        while (elapsedTime < appearDuration)
+        // 초기 크기에서 대기 (stayDuration 동안 유지)
+        uiElement.localScale = initialScale;
+        yield return new WaitForSeconds(stayDuration);
+
+        // 최종 크기로 서서히 줄어듦
+        float time = 0f;
+        while (time < duration)
         {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / appearDuration;
-            targetUI.localScale = Vector3.Lerp(startScale, endScale, t);
+            time += Time.deltaTime;
+            uiElement.localScale = Vector3.Lerp(initialScale, finalScale, time / duration);
             yield return null;
         }
 
-        targetUI.localScale = endScale; // 최종 크기로 설정
-
-        yield return new WaitForSeconds(stayDuration); // 최종 크기에서 1초 유지
-        // 이후에는 최종 크기로 유지된 상태로 남아있게 됩니다.
+        // 최종 크기로 설정
+        uiElement.localScale = finalScale;
     }
 }
 

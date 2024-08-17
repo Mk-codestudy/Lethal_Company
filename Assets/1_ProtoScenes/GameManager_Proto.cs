@@ -77,7 +77,11 @@ public class GameManager_Proto : MonoBehaviour
     public GameObject resultUI;
     public float printresultTime = 2.5f;
     public GameObject endpointCam;
-    
+    public GameObject escUI;
+    //esc 제어
+    bool escOn;
+
+
     private void Awake()
     {
         if (gm == null)
@@ -96,6 +100,7 @@ public class GameManager_Proto : MonoBehaviour
         //사망 UI 뜨지 않게 꺼두기
         deadUI.SetActive(false);
         audioSource = GetComponent<AudioSource>();
+        printresultTime = 2.5f;
     }
 
     void Update()
@@ -122,6 +127,15 @@ public class GameManager_Proto : MonoBehaviour
         //}
         #endregion
 
+        //ESC Pause 기능
+        if (!escOn && Input.GetKeyDown(KeyCode.Escape))
+        {
+            PressESC();
+        }
+        else if (escOn && Input.GetKeyDown(KeyCode.Escape)) //ESC UI 켜진 상태에서 한번 더 누르면?
+        {
+            Continue(); //계속하기 판정
+        }
 
     }
 
@@ -287,29 +301,55 @@ public class GameManager_Proto : MonoBehaviour
                 decased.SetActive(true);
                 checkUI.SetActive(false);
             }
-
+            if (Input.GetMouseButtonDown(0))
+            {
+                Time.timeScale = 1;
+                RoundOverButton();
+            }
         }
     }
 
 
     //레버 땅겼을때 씬 조절할 함수
-    public void RoundOver(int num)
+    //public void RoundOver(int num)
+    //{
+    //    SceneManager.LoadScene(num);
+
+    //    GameObject clock = GameObject.Find("MapUI");
+
+    //    if (clock != null)
+    //    {
+    //        clock.SetActive(false);
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("시계 안 찾아짐!");
+    //    }
+    //}
+
+    public void RoundOverButton()
     {
-        SceneManager.LoadScene(num);
-
-        GameObject clock = GameObject.Find("MapUI");
-
-        if (clock != null)
-        {
-            clock.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("시계 안 찾아짐!");
-        }
+        SceneManager.LoadScene(1);
     }
 
-    
+
+    void PressESC()
+    {
+        escOn = true;
+        backgroundMusic.GetComponent<AudioSource>().Pause();
+        Time.timeScale = 0;
+        Cursor.lockState = CursorLockMode.Confined;//마우스 활성화하기
+        escUI.SetActive(true);
+    }
+
+    public void Continue()
+    {
+        escOn = false;
+        backgroundMusic.GetComponent<AudioSource>().Play();
+        Cursor.lockState = CursorLockMode.Locked;
+        escUI.SetActive(false);
+        Time.timeScale = 1;
+    }
 
     #region 씬 조절 함수 
 

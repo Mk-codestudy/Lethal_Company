@@ -25,4 +25,13 @@ public class Result_Prise : MonoBehaviour
         have_Text.text = haveScrab.ToString();
         grade_Text.text = grade;
     }
+
+    private void Update()
+    {
+        if (GameManager_Proto.gm.playerHP < 0) //운명하셧을대
+        {
+            have_Text.text = "0";
+            grade_Text.text = "F";
+        }
+    }
 }

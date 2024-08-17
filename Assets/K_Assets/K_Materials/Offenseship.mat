@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: K_DoorDarkGray
+  m_Name: Offenseship
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: cdad28cd92d558049b6d9eda018007c7, type: 2}
+  m_Parent: {fileID: 2100000, guid: 00634a9054bc43e4ba67ae2dca93383a, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -27,10 +27,10 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _BaseColor: {r: 0.28301886, g: 0.28301886, b: 0.28301886, a: 1}
-    - _Color: {r: 0.28301883, g: 0.28301883, b: 0.28301883, a: 1}
+    - _BaseColor: {r: 0.14465404, g: 0.14465404, b: 0.14465404, a: 1}
+    - _Color: {r: 0.144654, g: 0.144654, b: 0.144654, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &3643029648136765855
+--- !u!114 &8445972338097948403
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

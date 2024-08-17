@@ -15,6 +15,8 @@ public class PlayerDieCimena : MonoBehaviour
     bool isStartCinema;
     public bool isCinemaEnd;
 
+    public GameObject terminalUI;
+
     private void Awake()
     {
         if (instance == null)
@@ -50,6 +52,8 @@ public class PlayerDieCimena : MonoBehaviour
                 subcam.gameObject.SetActive(false);
                 //subcam.transform.position = GameManager_Proto.gm.closeDoorCamPos.position;
                 //subcam.transform.rotation = GameManager_Proto.gm.closeDoorCamPos.rotation;
+
+                terminalUI.SetActive(false);
 
                 isStartCinema = false;
                 isCinemaEnd = true;

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class K_Clock : MonoBehaviour
 {
-    public static K_Clock instance;  // Singleton 인스턴스
+    //public static K_Clock instance;  // Singleton 인스턴스
 
     public int time = 8;
     public int min = 0;
@@ -28,16 +28,16 @@ public class K_Clock : MonoBehaviour
 
     void Awake()
     {
-        // Singleton 패턴을 구현하는 부분
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);  // 씬 전환 시 파괴되지 않도록 설정
-        }
-        else
-        {
-            Destroy(gameObject);  // 이미 인스턴스가 존재한다면 파괴
-        }
+        //// Singleton 패턴을 구현하는 부분
+        //if (instance == null)
+        //{
+        //    instance = this;
+        //    DontDestroyOnLoad(gameObject);  // 씬 전환 시 파괴되지 않도록 설정
+        //}
+        //else
+        //{
+        //    Destroy(gameObject);  // 이미 인스턴스가 존재한다면 파괴
+        //}
     }
 
     void Update()
