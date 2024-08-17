@@ -35,7 +35,6 @@ public class EnterFactory : MonoBehaviour
     //public Transform offensepos;
     //public Transform factorypos;
 
-
     //UI
     [Header("진척도 슬라이더 UI")]
     public Slider progressSlider; // 진척도를 표시할 Slider
@@ -115,22 +114,22 @@ public class EnterFactory : MonoBehaviour
     }
 
 
-    void GotoAnotherRoom(bool factoryGate) //공간 넘어가는 함수
+    public void GotoAnotherRoom(bool factoryGate) //공간 넘어가는 함수
     {
         if (!factoryGate) //오펜스 => 공장
         {
             //공장 맵 활성화
             factory.SetActive(true);
-            
+
             //오펜스 비활성화
             offense.SetActive(false);
         }
         else //공장 => 오펜스
         {
-            //공장 맵 활성화
+            //오펜스 맵 활성화
             offense.SetActive(true);
-            
-            //오펜스 비활성화
+
+            //공장 비활성화
             factory.SetActive(false);
         }
     }

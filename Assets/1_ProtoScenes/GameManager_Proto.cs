@@ -45,14 +45,39 @@ public class GameManager_Proto : MonoBehaviour
     public float enumDamage = 30; //몹 한번 공격할때마다 입는 데미지량
 
     [Header("사망 UI 관련 퍼블릭 변수")]
-    public GameObject deadUI;
+    public GameObject deadUI; //생체신호 오프라인
+    public EnterFactory enterFactory; //행성이랑 공장 스왑하는 클래스
+    public Transform closeDoorCamPos; //문 닫히는거 보여줄 카메라 위치
+    public bool isCenemaStart; //시네마틱 한번만 켜게 해줌
+    public ShipMoving shipMoving; //함선 출항시킬 클래스
+    public GameObject checkUI;
+    public GameObject decased;
+
+    [Header("사망 후 딜레이 시간")]
+    public float deadAfterDelay = 1.5f;
+    public float currenttime = 0;
 
     [Header("플레이어 피격 UI 컬러 코루틴")]
     public HitUICorutine hitUICorutine;
 
     AudioSource audioSource;
     bool alreadyPlayed; //사운드 한번만 재생하게해주는 코드
+    bool dieCinemaPlayed; //함선 이륙하는 씨네머신이 끝났는지
 
+    [Header("배경음악 제어 게임오브제")]
+    public GameObject backgroundMusic;
+
+    [Header("함선 문 제어")]
+    public ShipDoor shipDoor;
+    public YouMustOpenDoor mustopendoor;
+
+    [Header("UI제어")]
+    public GameObject mapUI;
+    public GameObject playerstate;
+    public GameObject resultUI;
+    public float printresultTime = 2.5f;
+    public GameObject endpointCam;
+    
     private void Awake()
     {
         if (gm == null)
@@ -106,24 +131,63 @@ public class GameManager_Proto : MonoBehaviour
     {
         //플레이어 레그돌 실행
         //각종 플레이어 기능(이동, 그랩, 기타등등...) 상실
-        
 
         //카메라 3인칭으로 전환
 
         //UI실행
         PlayerDeadUI();
 
-        //죽는 소리
-        if (!alreadyPlayed)
+        //시계 뺏기
+        mapUI.SetActive(false);
+        //플레이어 상태UI 뺏기
+        playerstate.SetActive(false);
+        //히트 코루틴 뺏기
+        hitUICorutine.gameObject.SetActive(false);
+
+        if (player.GetComponent<CharacterController>() != null) //지뢰 밟으면 null임
         {
-            audioSource.Play();
-            alreadyPlayed = true;
+            //죽는 소리
+            if (!alreadyPlayed)
+            {
+                audioSource.Play();
+                alreadyPlayed = true;
+            }
         }
 
-        //인보크 1초 뒤에 게임오버 연출(함선 떠나기)
-        Invoke("RoundOver", 5f);
+        //1~2초정도 기다림...
+        if (currenttime <= deadAfterDelay)
+        {
+            currenttime += Time.deltaTime;
+        }
+        else
+        {
+            deadUI.SetActive(false);
+            //함선이 존재하려면 offens쪽이 활성화되어야 한다.
+            enterFactory.GotoAnotherRoom(true);
+            player.SetActive(false);//플레이어 뺏기 (카메라 제어를 위해)
 
+            //노래 꺼.
+            backgroundMusic.SetActive(false);
+
+            if (!isCenemaStart)
+            {
+                //함선 출항시켯.
+                shipMoving.departing = true;
+                //씨네머신 딱 한번만 틀dㅓ.
+                PlayerDieCimena.instance.StartCinemachime();
+                isCenemaStart = true;
+            }
+            else
+            {
+                if (PlayerDieCimena.instance.isCinemaEnd == true)//씨네머신이 끝나면...
+                {
+                    AfterDepart(); //결과 창.
+                }
+            }
+        }
     }
+
+
     public void PlayerDeadUI()
     {
         //Albedo 60정도의 검은 창 배경에 텍스트
@@ -186,10 +250,52 @@ public class GameManager_Proto : MonoBehaviour
     }
 
 
-    //함선으로 돌아가는 씬 조절 함수
-    public void RoundOver()
+    public void AfterDepart()
     {
-        SceneManager.LoadScene(1);
+        if (Camera.main == null)
+        {
+            endpointCam.GetComponent<AudioListener>().enabled = true;
+        }
+        shipDoor.isDoorOpen = false;
+        mustopendoor.timer = 1000;
+        if (printresultTime > 0)
+        {
+            printresultTime -= Time.deltaTime;
+        }
+        else
+        {
+            //시계 뺏기
+            mapUI.SetActive(false);
+            //플레이어 상태UI 뺏기
+            playerstate.SetActive(false);
+            //노래 꺼.
+            backgroundMusic.SetActive(false);
+            //시간 멈춰. 
+            Time.timeScale = 0;
+
+            //결과 UI 출력.
+            resultUI.SetActive(true);
+
+            //플레이어 사망/아님 여부에 따라 체크 바꾸기
+            if (playerHP > 0)
+            {
+                checkUI.SetActive(true);
+                decased.SetActive(false);
+            }
+            else
+            {
+                decased.SetActive(true);
+                checkUI.SetActive(false);
+            }
+
+        }
+    }
+
+
+    //레버 땅겼을때 씬 조절할 함수
+    public void RoundOver(int num)
+    {
+        SceneManager.LoadScene(num);
 
         GameObject clock = GameObject.Find("MapUI");
 
@@ -202,6 +308,8 @@ public class GameManager_Proto : MonoBehaviour
             Debug.Log("시계 안 찾아짐!");
         }
     }
+
+    
 
     #region 씬 조절 함수 
 
