@@ -233,7 +233,7 @@ public class PlayerMove : MonoBehaviour
 
     }
 
-           
+
 
 
 
@@ -249,9 +249,10 @@ public class PlayerMove : MonoBehaviour
         movedir.Normalize(); // 0 ~ 1 사이의 값만 나온다.
 
         // movedir.y = yPos; // 계속해서 아래로 중력 가속도를 받음    
-
-        cc.Move(movedir * walkSpeed * Time.deltaTime);  // 걷는 속도로 캐릭터 움직임
-
+        if (cc != null)
+        {
+            cc.Move(movedir * walkSpeed * Time.deltaTime);  // 걷는 속도로 캐릭터 움직임
+        }
 
 
         if (movedir.magnitude > 0.5f)
@@ -406,7 +407,10 @@ public class PlayerMove : MonoBehaviour
 
         transform.eulerAngles = new Vector3(0, rotY, 0f);
 
-        Camera.main.transform.GetComponent<Follow_Cam>().rotX = rotX; // 카메라에 있는 followcam의 스크립트의 rotx 변수를 받아옴
+        if (Camera.main != null)
+        {
+            Camera.main.transform.GetComponent<Follow_Cam>().rotX = rotX; // 카메라에 있는 followcam의 스크립트의 rotx 변수를 받아옴
+        }
 
 
     }
@@ -541,16 +545,18 @@ public class PlayerMove : MonoBehaviour
 
     private void OnDrawGizmos() // 씬 뷰에서 Box Cast를 그려서확인한다.
     {
-        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);  // 빨간줄은 레이
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(ray.origin, ray.direction * rayDistance);
+        if (Camera.main != null)
+        {
+            Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);  // 빨간줄은 레이
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(ray.origin, ray.direction * rayDistance);
 
-        // 빨간줄의 끝에 BoxCast의 박스를 그립니다.
-        Vector3 halfExtents = boxSize / 2; // 박스길이의 반
-        Vector3 castEnd = ray.origin + ray.direction * rayDistance; // ray의 시작 위치에서 ray의 방향 * 최대거리
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(castEnd, boxSize);
-
+            // 빨간줄의 끝에 BoxCast의 박스를 그립니다.
+            Vector3 halfExtents = boxSize / 2; // 박스길이의 반
+            Vector3 castEnd = ray.origin + ray.direction * rayDistance; // ray의 시작 위치에서 ray의 방향 * 최대거리
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(castEnd, boxSize);
+        }
     }
 
 

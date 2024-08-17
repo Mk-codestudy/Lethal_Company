@@ -27,6 +27,7 @@ public class CinemaManager : MonoBehaviour
     }
     void Start()
     {
+        subCam.GetComponent<AudioListener>().enabled = false; //오디오 리스너 충돌나서 설정했어요! -민경-
         mainCam.gameObject.SetActive(true);
         statusUi.SetActive(true);
         timeUI.SetActive(true);
@@ -40,15 +41,18 @@ public class CinemaManager : MonoBehaviour
     {
         if (isStartCinema)
         {
+            subCam.GetComponent<AudioListener>().enabled = true; //오디오 리스너 충돌나서 설정했어요! -민경-
+
             if (director.time >= director.duration)
             {
                 director.Stop();
-                subCam.SetActive(false);
+                subCam.SetActive(false); 
                 mainCam.SetActive(true);
 
                 statusUi.SetActive(true);
                 timeUI.SetActive(true);
                 isStartCinema = false;
+                subCam.GetComponent<AudioListener>().enabled = false; //오디오 리스너2222
             }
         }
     }

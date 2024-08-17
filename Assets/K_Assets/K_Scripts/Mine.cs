@@ -52,8 +52,11 @@ public class Mine : MonoBehaviour
             minesound.clip = minesoundclip[0];
             minesound.Play();
             currenttime = 0;
-            lights.SetActive(true);
-            Invoke("Offlight", 0.2f);
+            if (lights != null)
+            {
+                lights.SetActive(true);
+                Invoke("Offlight", 0.2f);
+            }
         }
 
     }
@@ -92,7 +95,7 @@ public class Mine : MonoBehaviour
             Destroy(gameObject.transform.GetChild(0).gameObject);//지뢰 몸은 사라짐
             gameObject.GetComponent<BoxCollider>().enabled = false; //콜라이더 비활성화
             minesound.enabled = false; //사운드도 꺼
-            GameManager_Proto.gm.PlayerDead();//플레이어 사망 판정
+            GameManager_Proto.gm.playerHP = 0;
         }
         else
         {
