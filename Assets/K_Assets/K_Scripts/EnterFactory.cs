@@ -35,7 +35,6 @@ public class EnterFactory : MonoBehaviour
     //public Transform offensepos;
     //public Transform factorypos;
 
-
     //UI
     [Header("진척도 슬라이더 UI")]
     public Slider progressSlider; // 진척도를 표시할 Slider
@@ -44,6 +43,13 @@ public class EnterFactory : MonoBehaviour
     [Header("UI 캔버스 제어")]
     public GameObject canvas;
 
+
+    //렌더링 설정 만지기
+    Color offense_fog;
+    float offense_fogEndDis;
+
+    //UI 껐다키기
+    public GameObject clock;
 
     void Start()
     {
@@ -62,6 +68,11 @@ public class EnterFactory : MonoBehaviour
         }
 
         //mapManager.LoadMapState();
+        //기존 렌더링 설정 캐싱하기
+        offense_fog = RenderSettings.fogColor;
+        offense_fogEndDis = RenderSettings.fogEndDistance;
+        print(offense_fog);
+        print(offense_fogEndDis);
 
     }
 
@@ -88,6 +99,8 @@ public class EnterFactory : MonoBehaviour
 
             if (currentHoldTime > doorHoldTime) //내가 정한 시간을 넘어가면!
             {
+                currentHoldTime = 0f;
+                SliderReset();
                 GotoAnotherRoom(factoryGate);
                 //넘어가기
                 print("공간 넘어가기!");
@@ -99,7 +112,6 @@ public class EnterFactory : MonoBehaviour
             SliderReset();
         }
     }
-
 
     void SliderReset()
     {
@@ -115,24 +127,48 @@ public class EnterFactory : MonoBehaviour
     }
 
 
-    void GotoAnotherRoom(bool factoryGate) //공간 넘어가는 함수
+    public void GotoAnotherRoom(bool factoryGate) //공간 넘어가는 함수
     {
         if (!factoryGate) //오펜스 => 공장
         {
+            clock.SetActive(false);
+
             //공장 맵 활성화
             factory.SetActive(true);
-            
+
             //오펜스 비활성화
             offense.SetActive(false);
+
+            FactoryRenderSetting();
+
         }
         else //공장 => 오펜스
         {
-            //공장 맵 활성화
+            clock.SetActive(true);
+
+            //오펜스 맵 활성화
             offense.SetActive(true);
-            
-            //오펜스 비활성화
+
+            //공장 비활성화
             factory.SetActive(false);
+
+            OffenseRenderSetting();
         }
+    }
+
+
+    void FactoryRenderSetting()
+    {
+        RenderSettings.fogColor = new Color(0f, 0f, 0f, 160 / 255f);
+        RenderSettings.fogEndDistance = 15f;
+    }
+
+    void OffenseRenderSetting()
+    {
+        RenderSettings.fogColor = new Color(0.233f, 0.233f, 0.233f, 1f);
+        RenderSettings.fogEndDistance = 100f;
+        //print(offense_fog);
+        //print(offense_fogEndDis);
     }
 
 

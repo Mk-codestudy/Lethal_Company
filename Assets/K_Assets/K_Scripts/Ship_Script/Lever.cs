@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,7 +24,7 @@ public class Lever : MonoBehaviour
     [Header("E 홀드 시간")]
     [Range(0.5f, 3.0f)]
     public float doorHoldTime = 1.5f;
-    float currentHoldTime = 0;
+    public float currentHoldTime = 0;
 
     //UI
     [Header("진척도 슬라이더 UI")]
@@ -39,7 +40,14 @@ public class Lever : MonoBehaviour
     public int sceneNumber;
     public AudioClip[] audioClips;
 
-    AudioSource audioSource;
+    public AudioSource audioSource;
+
+    [Header("오펜스 맵에서 레버 당기면 이륙하기")]
+    public ShipMoving shipMoving;
+    //public ShipDoor shipDoor;
+    public float delaytodeparttime = 0.5f;
+    public float closedoortime = 5f;
+    public bool leverActivated;
 
     void Start()
     {
@@ -64,6 +72,11 @@ public class Lever : MonoBehaviour
     {
         //문과 플레이어의 거리를 잰다.
         float distanceToPlayer = Vector3.Distance(leverGetPoint.transform.position, player.position);
+        
+        if (leverActivated)
+        {
+            LetsDePart();
+        }
 
         if (distanceToPlayer > interactionDistance)
         {
@@ -90,11 +103,24 @@ public class Lever : MonoBehaviour
                     //함선 흔들어제끼기
                     audioSource.clip = audioClips[0];
                     audioSource.Play();
-                    //인보크로 다음 사운드
-                    Invoke("TurnonSound", 0.5f);
-                    //인보크로 1초 뒤에 씬넘어가기
-                    Invoke("LoadScene", 5f);
-                    currentHoldTime = 0f;
+                    
+
+                    //씬 넘어가기
+                    // 현재 씬 인덱스(순서)를 확인한 뒤
+                    int currentSceneindex = SceneManager.GetActiveScene().buildIndex;
+                    if (currentSceneindex == 1) //우주 위라면?
+                    {
+                        //인보크로 다음 사운드
+                        Invoke("TurnonSound", 0.5f);
+
+                        //인보크로 3.5초 뒤에 씬넘어가기
+                        Invoke("LoadScene", 3.5f);
+                        currentHoldTime = 0f;
+                    }
+                    else if (currentSceneindex == 2) //오펜스 맵이라면?
+                    {
+                        leverActivated = true;
+                    }
                 }
             }
             else
@@ -102,6 +128,31 @@ public class Lever : MonoBehaviour
                 currentHoldTime = 0;
                 SliderReset();
             }
+        }
+
+
+
+    }
+
+    private void LetsDePart()
+    {
+        if (delaytodeparttime > 0f)
+        {
+            delaytodeparttime -= Time.deltaTime;
+        }
+        else
+        {
+            shipMoving.departing = true; //이륙 레쭈고
+        }
+
+        if (closedoortime > 0f)
+        {
+            closedoortime -= Time.deltaTime;
+
+        }
+        else if (closedoortime <= 0f)
+        {
+            GameManager_Proto.gm.AfterDepart();
         }
     }
 

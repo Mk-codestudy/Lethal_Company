@@ -8,7 +8,7 @@ public class DeadPoint : MonoBehaviour
     {
         if (other.gameObject.name.Contains("Player"))
         {
-            GameManager_Proto.gm.PlayerDead();
+            GameManager_Proto.gm.playerHP = 0;
         }
     }
 }

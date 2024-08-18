@@ -8,7 +8,6 @@ public class ShipMoving : MonoBehaviour
     public Transform departPos;
     public Transform landPos;
 
-
     [Header("Âø·ú ¿©ºÎ È®ÀÎ º¯¼ö")]
     public bool alreadyLanding;
 
@@ -58,10 +57,12 @@ public class ShipMoving : MonoBehaviour
         }
         else if (departing)
         {
-            landPercent += Time.deltaTime * 0.2f;
+            departPercent += Time.deltaTime * 0.1f;
             Vector3 result = Vector3.Lerp(landPos.position, departPos.position, departPercent);
-            player.GetComponent<CharacterController>().Move(result - transform.position);
-
+            if (player != null)
+            {
+                player.GetComponent<CharacterController>().Move(result - transform.position);
+            }
             transform.position = result;
         }
 
