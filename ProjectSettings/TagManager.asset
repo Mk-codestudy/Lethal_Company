@@ -11,6 +11,8 @@ TagManager:
   - Obstacle
   - ItemDrop
   - Doublehand
+  - Sand
+  - Factory
   layers:
   - Default
   - TransparentFX

@@ -17,25 +17,25 @@ public class Canvas_Bilboard : MonoBehaviour
     void Update()
     {
 
-        //if (itemCanvas != null)
-        //{
-        //    Vector3 dir = itemCanvas.transform.position - Camera.main.transform.position;  // 메인카메라(player) 를 바라보는 방향 벡터
-
-        //    Quaternion lookRotation = Quaternion.LookRotation(dir); // 카메라를 보는 방향으로 바라보는 rotation
-
-        //    itemCanvas.transform.rotation = lookRotation;
-
-        //}
-
         if (itemCanvas != null)
         {
-            Vector3 dir = itemCanvas.transform.position - mainCamera.transform.position;  // 메인카메라(player) 를 바라보는 방향 벡터
+            Vector3 dir = itemCanvas.transform.position - Camera.main.transform.position;  // 메인카메라(player) 를 바라보는 방향 벡터
 
             Quaternion lookRotation = Quaternion.LookRotation(dir); // 카메라를 보는 방향으로 바라보는 rotation
 
             itemCanvas.transform.rotation = lookRotation;
 
         }
+
+        //if (itemCanvas != null)
+        //{
+        //    Vector3 dir = itemCanvas.transform.position - mainCamera.transform.position;  // 메인카메라(player) 를 바라보는 방향 벡터
+
+        //    Quaternion lookRotation = Quaternion.LookRotation(dir); // 카메라를 보는 방향으로 바라보는 rotation
+
+        //    itemCanvas.transform.rotation = lookRotation;
+
+        //}
 
 
 

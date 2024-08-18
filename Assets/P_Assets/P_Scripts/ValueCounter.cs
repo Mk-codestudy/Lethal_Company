@@ -5,6 +5,7 @@ using UnityEngine;
 public class ValueCounter : MonoBehaviour
 {
     public int totalValue;
+    public bool isInside; // 아이템이 안에 있는지 확인
 
     void Start()
     {
@@ -18,10 +19,10 @@ public class ValueCounter : MonoBehaviour
 
 
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         // 안에 들어있는것이 아이템이면
-        if (other.CompareTag("Item"))
+        if (other.CompareTag("Item") || other.CompareTag("Doublehand"))
         {
             Item item = other.GetComponent<Item>();
 
@@ -31,4 +32,17 @@ public class ValueCounter : MonoBehaviour
 
               
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        Item item = other.GetComponent<Item>();
+
+        if (item != null && isInside)
+        {
+            isInside = false;
+            totalValue -= item.itemValue;
+        }
+    }
+
+
 }

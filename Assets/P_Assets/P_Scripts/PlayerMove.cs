@@ -2,6 +2,8 @@ using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+
 
 //using UnityEditor.Experimental.GraphView;
 //using UnityEditorInternal;
@@ -82,6 +84,22 @@ public class PlayerMove : MonoBehaviour
 
 
 
+    [Header("소리")]
+    private float footstepTimer = 0f; // 발소리 타이머
+    public float walkfootstepInterval = 0.5f; // 발소리 간격
+    public float runfootstepInterval = 0.3f; // 발소리 간격
+
+
+    public bool isSand;
+    public AudioClip Sand_footstepSound; // 모래 발소리 클립
+
+    public bool isFactory;  
+    public AudioClip  Factory_footstepSound; // 공장 발소리 클립
+
+
+
+
+
     public Item_Flashlight flashlightItem; // 플래쉬 라이트 변수
    
 
@@ -158,7 +176,7 @@ public class PlayerMove : MonoBehaviour
         switch (currentState)
         {
             case PlayerState.Normal:
-                Normal();
+                Normal();               
                 break;
             case PlayerState.Walk:
                 Walk();
@@ -204,7 +222,10 @@ public class PlayerMove : MonoBehaviour
         RegenStamina(); // 스태미너 재생(15 고정값)
         UpdateUI(); // ui를 실시간 업데이트
         Scan();
-       
+
+        CheckGround();
+
+
 
 
 
@@ -252,9 +273,15 @@ public class PlayerMove : MonoBehaviour
         x = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
 
+       
+
+
+
         Vector3 movedir = new Vector3(x, 0f, v);
         movedir = transform.TransformDirection(movedir); // 로컬 좌표 이동
         movedir.Normalize(); // 0 ~ 1 사이의 값만 나온다.
+
+    
 
         // movedir.y = yPos; // 계속해서 아래로 중력 가속도를 받음    
         if (cc != null)
@@ -278,9 +305,47 @@ public class PlayerMove : MonoBehaviour
         x = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
 
+
         Vector3 movedir = new Vector3(x, 0f, v);
         movedir = transform.TransformDirection(movedir); // 로컬 좌표 이동
         movedir.Normalize(); // 속력
+
+
+
+        //발소리
+        footstepTimer += Time.deltaTime; // 타이머 업데이트
+        if (movedir.magnitude > 0.5f) // 이동 벡터의 크기가 일정 값 이상일 때
+        {
+            if (footstepTimer >= walkfootstepInterval) // 타이머가 발소리 간격 이상일 때
+            {
+                footstepTimer = 0f; // 타이머 리셋
+               
+                if(isSand)
+                {
+                    AudioSource.PlayClipAtPoint(Sand_footstepSound, transform.position); // 모래 발소리 클립
+
+                    isFactory = false;
+                }
+                else if(isFactory)
+                {
+                    AudioSource.PlayClipAtPoint(Factory_footstepSound, transform.position); // 공장 발소리 클립
+
+                    isSand = false;
+                }
+
+
+            }
+        }
+        else
+        {
+            footstepTimer = 0f; // 이동하지 않을 때 타이머 리셋
+        }
+
+
+
+
+
+
 
         yPos += gravityPower.y * gravityVelocity * Time.deltaTime; // 중력의 y축값 * 중력속도 * 시간 보간 
         movedir.y = yPos; // 캐릭터의 y축에 중력적용
@@ -316,6 +381,33 @@ public class PlayerMove : MonoBehaviour
 
             yPos += gravityPower.y * gravityVelocity * Time.deltaTime; // 중력의 y축값 * 중력속도 * 시간 보간 
             movedir.y = yPos; // 캐릭터의 y축에 중력적용
+
+
+            //발소리
+            footstepTimer += Time.deltaTime; // 타이머 업데이트
+            if (movedir.magnitude > 0.5f) // 이동 벡터의 크기가 일정 값 이상일 때
+            {
+                if (footstepTimer >= runfootstepInterval) // 타이머가 발소리 간격 이상일 때
+                {
+                    footstepTimer = 0f; // 타이머 리셋
+
+                    if (isSand)
+                    {
+                        AudioSource.PlayClipAtPoint(Sand_footstepSound, transform.position); // 모래 발소리 클립
+                    }
+                    else if (isFactory)
+                    {
+                        AudioSource.PlayClipAtPoint(Factory_footstepSound, transform.position); // 공장 발소리 클립
+                    }
+
+
+                }
+            }
+            else
+            {
+                footstepTimer = 0f; // 이동하지 않을 때 타이머 리셋
+            }
+
 
 
             cc.Move(movedir * runSpeed * Time.deltaTime);  // 달리는 속도로 캐릭터 움직임
@@ -690,6 +782,7 @@ public class PlayerMove : MonoBehaviour
 
         }
 
+      
     }
 
     private void OnTriggerStay(Collider other)
@@ -720,6 +813,29 @@ public class PlayerMove : MonoBehaviour
             currentItem = null;
             Debug.Log("currentitem 이 null입니다");
             //currentItem = null;
+        }
+
+    }
+
+
+    //레이캐스트를 이용해 밟고있는 땅이 sand인지 factory인지 확인
+
+    public void CheckGround()
+    {
+        RaycastHit hit;
+
+        if(Physics.Raycast(transform.position, Vector3.down, out hit, 10f))
+        {
+            if(hit.collider.CompareTag("Sand"))
+            {
+                isSand = true; // 지면이 모래일 때
+                isFactory = false;  
+            }
+            else if(hit.collider.CompareTag("Factory"))
+            {
+                isSand = false; 
+                isFactory = true; // 지면이 공장(철제) 일 때
+            }
         }
 
     }

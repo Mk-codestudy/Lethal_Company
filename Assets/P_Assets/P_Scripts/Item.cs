@@ -13,6 +13,7 @@ public class Item : MonoBehaviour // 이 아이템 스크립트를 다른 아이템 스크립트에
     public TMP_Text itemName_text; // 아이템 이름
     public TMP_Text itemName_value; // 아이템 정보 를 표시
     public Sprite itemSprite; // 아이템의 스프라이트 이미지 
+    public bool isCalculated = true; // 계산 됬는지 안됬는지 확인
 
     public Camera mainCamera; 
 
