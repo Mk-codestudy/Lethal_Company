@@ -38,6 +38,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5611927504712380159, guid: 568297c60d4c52541b4d15254b897a44,
+        type: 3}
+      propertyPath: itemSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: bad0dccb9c96b364a8a3fc2e069e4d6d,
+        type: 3}
     - target: {fileID: 6871485831091633615, guid: 568297c60d4c52541b4d15254b897a44,
         type: 3}
       propertyPath: m_LocalRotation.w

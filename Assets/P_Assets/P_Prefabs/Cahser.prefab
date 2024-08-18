@@ -573,6 +573,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f42891296717eec42badb66363739aad,
         type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f42891296717eec42badb66363739aad,
+        type: 3}
       propertyPath: m_TagString
       value: Item
       objectReference: {fileID: 0}
@@ -681,7 +686,7 @@ MonoBehaviour:
   itemValue: 0
   itemName_text: {fileID: 5444589058414675729}
   itemName_value: {fileID: 1300168393159058299}
-  itemSprite: {fileID: 0}
+  itemSprite: {fileID: 21300000, guid: ce51d0ce8317e114c9731ff62b9e82bc, type: 3}
   mainCamera: {fileID: 0}
 --- !u!114 &1827176357610953859
 MonoBehaviour:

@@ -71,13 +71,14 @@ public class PlayerMove : MonoBehaviour
     //아이템 줍기 상호작용
     [Header("아이템 줍기 변수")]
     private bool collideItem = false; // 아이템 충돌체크
-    private GameObject currentItem; // 현재 충돌 중인 아이템
+    public GameObject currentItem; // 현재 충돌 중인 아이템
     public Transform RightHand; // 주을 아이템이 있을 위치 , Player의 자식오브젝트인  right hand를 드래그해서 넣는다.
     public GameObject selectedItem; // 현재 선택한 아이템
     public bool holdItem; // 현재 들고 있는ㄴ지 확인
     public GameObject newItem;  // 스위치한 아이템
     private int selectedIndex; // 선택된 아이템의 인덱스
     public Inventory inventory; // 인벤토리 스크립트 참조
+    public bool grabItem; // pickup item 을 위한 조건
 
 
 
@@ -145,8 +146,14 @@ public class PlayerMove : MonoBehaviour
 
 
 
-    void Update()
+    public void Update()
     {
+
+        if(currentState == PlayerState.Cinematic)
+        {
+            return;
+        }
+
 
         switch (currentState)
         {
@@ -185,6 +192,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         PickupItem(); // 무거운 아이템 줍기
+
         DropItem(); // 아이템 버리기
         StoreItemInventory(); // 아이템 인벤토리에 추가하기
         //EquipItem(num);
@@ -470,6 +478,8 @@ public class PlayerMove : MonoBehaviour
 
     void Cinematic()
     {
+       
+
 
     }
 
@@ -665,7 +675,7 @@ public class PlayerMove : MonoBehaviour
     private void OnTriggerEnter(Collider other)  // 처음 충돌시
     {
 
-        if (other.CompareTag("Item")) // item 태그의 콜라이더와 충돌했다면
+        if (other.CompareTag("Item") || other.CompareTag("Doublehand")) // item 태그의 콜라이더와 충돌했다면
         {
             //Debug.Log("아이템에 닿았습니다.");
 
@@ -749,27 +759,31 @@ public class PlayerMove : MonoBehaviour
 
     //}
 
-    public void PickupItem() // 이건 양손 아이템을 들때만
+    public void PickupItem() // 이건 양손 아이템을 들때만 인벤에 저장이 안되도록
     {
         if(Input.GetKeyDown(KeyCode.E) && (collideItem))
         {
-            if (currentItem.name.Contains("Casher")) 
+            if (currentItem.CompareTag("Doublehand") && currentItem != null) 
             {
+                Debug.Log("더블핸드입니다.");
                 currentItem.transform.SetParent(RightHand);
                 currentItem.transform.position = RightHand.transform.position;
                 currentItem.transform.rotation = RightHand.transform.rotation;
 
-                 Rigidbody rb = selectedItem.GetComponent<Rigidbody>(); // item 의 rigidbody 컴포넌트를 가져와서
+                 Rigidbody rb = currentItem.GetComponent<Rigidbody>(); // item 의 rigidbody 컴포넌트를 가져와서
                 if (rb != null)
                 {
                     rb.isKinematic = true; // 떨어지지 않게 iskineitc 을 체크
                 }
 
                 // 이 양손 오브젝트를 들면 다른 아이템과는 상호작용하지 못하도록
-               
-                holdItem = true;
+
+                grabItem = true;
                 
             }
+
+                        
+           
         }
     }
 
@@ -802,25 +816,56 @@ public class PlayerMove : MonoBehaviour
 
                 inventory.RemoveItem(selectedIndex);
 
+               
                 holdItem = false; // 현재 손에 든 아이템을 null로 설정
                 selectedItem = null; // 현재 선택된 아이템을 null로 설정
-            
+                currentItem = null;
+
             }
             
         }
-        else if (Input.GetKeyDown(KeyCode.G))
-        {            
+
+        // 이건 양손 아이템이나 벌집을 위한 예외조건 - inven에 저장되지않는 게임오브젝트
+
+        if (Input.GetKeyDown(KeyCode.G) && (currentItem.CompareTag("Doublehand") && grabItem))
+        {
+            Vector3 dropPos = transform.position + transform.forward * 3f; // 플레이어의 전방 3f의 거리앞에서 떨어뜨릴 지점을 생성
+            currentItem.transform.SetParent(null); // Righthand에서 벗어남
+            currentItem.transform.position = dropPos; // hold 아이템의 위치를 droppos로 이동
+            currentItem.SetActive(true);
+
+            Rigidbody rb = currentItem.GetComponent<Rigidbody>(); // 공중에서 생성된 아이템을 떨어뜨리기 위해 item 에 rigidbody를 추가
+
+            if (rb != null)
             {
-                Debug.Log("G 키가 눌렸지만 selectedItem이 null입니다.");
+                rb.isKinematic = false; // 중력의 작용을 받기 위해 iskinetic을 체크해제
             }
+            else
+            {
+                Debug.Log("Rigidbody 가 없습니다.");
+            }
+
+            grabItem = false;
+            holdItem = false; // 현재 손에 든 아이템을 null로 설정
+            currentItem = null; // 현재 선택된 아이템을 null로 설정
+
+
         }
+       
 
-
+        
 
 
 
 
     }
+
+      //else if (Input.GetKeyDown(KeyCode.G))
+      //  {            
+      //      {
+      //          Debug.Log("G 키가 눌렸지만 selectedItem이 null입니다.");
+      //      }
+      //  }
 
 
 
@@ -829,12 +874,17 @@ public class PlayerMove : MonoBehaviour
     {
         if (currentItem != null && collideItem) // 만약, 아이템과 충돌하고, 현재 아이템이 null 이 아니라라면
         {
-            if (Input.GetKeyDown(KeyCode.E)) // e를 누르면
+            if (Input.GetKeyDown(KeyCode.E) && currentItem.CompareTag("Item")) // e를 누르면
             {
                 inventory.AddItem(currentItem);
                 currentItem.SetActive(false);
                 currentItem = null;
             }
+            //else if(currentItem.CompareTag("Doublehand"))
+            //{
+            //    return;              
+            //}
+          
 
         }
 
@@ -881,8 +931,26 @@ public class PlayerMove : MonoBehaviour
             {
                 newItem.transform.forward = RightHand.transform.forward;
             }
-                       
-            
+
+            if (newItem != null && newItem.name.Contains("Flashlight"))
+            {
+                // 손전등의의 회전값
+                Vector3 handlightRV = new Vector3(-17.667f, -90.994f, -183.146f);
+             
+                Quaternion HandlightRotation = Quaternion.Euler(handlightRV);
+              
+                // 손전등의 회전값의 로컬 좌표 로테이션으로 바꿔서 설정한다.
+                newItem.transform.position = RightHand.position;
+                newItem.transform.localRotation = HandlightRotation;
+            }
+            else
+            {
+                newItem.transform.forward = RightHand.transform.forward;
+            }
+
+
+
+
 
             // 공중에서 생성된 아이템을 떨어뜨리기 위해 item 에 rigidbody를 추가
             Rigidbody rb = newItem.GetComponent<Rigidbody>();

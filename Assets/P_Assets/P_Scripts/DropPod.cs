@@ -10,17 +10,15 @@ public class DropPod : MonoBehaviour // droppod 가 dropstart 포인트에서 dropendp
     public float totalDropDuration = 7f; // 총 낙하할 시간 
     public float speed; // 초기 속도
     public float easing; // 감속 정도
-    public GameObject shover;
+   
 
     public GameObject item1; // pod에서 생성될 아이템
     public GameObject item2;
-    public GameObject item3;
-    public GameObject item4;
+    
 
     public Transform regenPos1;
     public Transform regenPos2;
-    public Transform regenPos3;
-    public Transform regenPos4;
+    
     private bool hasDropped = false; // 도착 여부를 확인
 
 
@@ -39,8 +37,7 @@ public class DropPod : MonoBehaviour // droppod 가 dropstart 포인트에서 dropendp
 
         Rigidbody rb1 = item1.GetComponent<Rigidbody>();
         Rigidbody rb2 = item2.GetComponent<Rigidbody>();
-        Rigidbody rb3 = item3.GetComponent<Rigidbody>();
-        Rigidbody rb4 = item4.GetComponent<Rigidbody>();
+       
 
        
 
@@ -67,25 +64,39 @@ public class DropPod : MonoBehaviour // droppod 가 dropstart 포인트에서 dropendp
         {
             transform.position = endPoint.position; 
 
-
-            if (!hasDropped)
-            {
-                hasDropped = true; // 도착 후 한 번만 실행되도록 설정
-
-                Invoke("InstantiateItem", 1f); // 1초 후 shover 인스턴스화
-            }
-
         }
         
     }
 
-    public void InstantiateItem() // 아이템들을을 지정된 위치에 생성
+    private void OnTriggerEnter(Collider other) //리지드 바디 꼭 넣기...
     {
-        Instantiate(item1, regenPos1.position, regenPos1.rotation); // 아이템을 각 리젠 장소에서 생성
-        Instantiate(item2, regenPos2.position, regenPos2.rotation); // 
-        Instantiate(item3, regenPos3.position, regenPos3.rotation); // 
-        Instantiate(item4, regenPos4.position, regenPos4.rotation); //
+     
+        if (other.CompareTag("ItemDrop"))
+        {
+            
+
+            if (!hasDropped)
+            {
+                Debug.Log("닿았냐?");
+                hasDropped = true;
+                Invoke("InstantiateItem", 4f);
+            }
+        
+        }
+                    
     }
 
+    
+
+    public void InstantiateItem() // 아이템들을을 지정된 위치에 생성
+    {
+        if(item1 != null && item2 != null)
+        {
+            Instantiate(item1, regenPos1.position, regenPos1.rotation); // 아이템을 각 리젠 장소에서 생성
+            Instantiate(item2, regenPos2.position, regenPos2.rotation); // 
+        }
+        
+    }
+       
     
 }

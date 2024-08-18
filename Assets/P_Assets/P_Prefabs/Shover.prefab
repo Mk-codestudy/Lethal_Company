@@ -739,7 +739,7 @@ MonoBehaviour:
   itemValue: 0
   itemName_text: {fileID: 3994134755702846964}
   itemName_value: {fileID: 1906917980029182173}
-  itemSprite: {fileID: 0}
+  itemSprite: {fileID: 21300000, guid: 42aecd6a8a0697844ae0f098a5a41187, type: 3}
   mainCamera: {fileID: 0}
   playermove: {fileID: 0}
 --- !u!114 &4955233025439142707

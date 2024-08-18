@@ -18,6 +18,12 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1577061523925860670, guid: 47914ab96f5057c42a63e08341b21762,
+        type: 3}
+      propertyPath: itemSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 269ef355b19e1a941a3e3473449711ac,
+        type: 3}
     - target: {fileID: 2406396040960377295, guid: 47914ab96f5057c42a63e08341b21762,
         type: 3}
       propertyPath: m_Constraints

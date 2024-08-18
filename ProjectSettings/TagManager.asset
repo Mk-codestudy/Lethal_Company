@@ -9,6 +9,8 @@ TagManager:
   - Item
   - Ladder
   - Obstacle
+  - ItemDrop
+  - Doublehand
   layers:
   - Default
   - TransparentFX
