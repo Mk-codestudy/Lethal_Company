@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -50,6 +51,9 @@ public class EnterFactory : MonoBehaviour
 
     //UI ²°´ÙÅ°±â
     public GameObject clock;
+
+    public PlayerMove move;
+
 
     void Start()
     {
@@ -141,6 +145,10 @@ public class EnterFactory : MonoBehaviour
 
             FactoryRenderSetting();
 
+
+            move.isFactory = true;
+            move.isSand = false;
+            
         }
         else //°øÀå => ¿ÀÆæ½º
         {
@@ -153,6 +161,10 @@ public class EnterFactory : MonoBehaviour
             factory.SetActive(false);
 
             OffenseRenderSetting();
+
+            move.isFactory = false;
+            move.isSand = true;
+
         }
     }
 
